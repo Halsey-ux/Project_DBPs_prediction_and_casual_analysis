@@ -63,10 +63,43 @@ The first-round task is to:
 
 This repository should mainly contain:
 
-- `scripts/` style processing logic
-- markdown reports and research notes
+- `scripts/` processing logic
+- `docs/` project documentation and research notes
 - lightweight metadata and summary outputs
-- project documentation
+- repository-level guidance files
 
 Large raw datasets, temporary outputs, and generated heavy files should remain local and outside version control.
 
+## Recommended Local Structure
+
+The project root is intentionally kept light. The recommended structure is:
+
+```text
+Project_DBPs_prediction_and_casual_analysis/
+├─ docs/
+├─ scripts/
+├─ data_local/
+├─ scratch/
+├─ README.md
+└─ .gitignore
+```
+
+Directory roles:
+
+- `docs/`
+  - research notes
+  - SYR4 logic explanations
+  - project status and planning files
+- `scripts/`
+  - data conversion scripts
+  - merge scripts
+  - analysis scripts
+- `data_local/`
+  - local-only large files
+  - sample Excel files used for local checking
+  - not tracked by Git
+- `scratch/`
+  - temporary outputs
+  - repair/test folders
+  - cache-like local artifacts
+  - not tracked by Git

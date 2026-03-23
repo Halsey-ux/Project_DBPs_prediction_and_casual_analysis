@@ -27,4 +27,5 @@ archive/
 data_raw/
 data_staging/
 data_analysis/
-
+data_local/
+scratch/
