@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+env/
+
+# OS / editor
+Thumbs.db
+.DS_Store
+
+# Temporary / generated folders
+.codex_tmp/
+repair_test/
+repaired_excel_subset/
+test_excel_out/
+
+# Large local data artifacts
+*.xlsx
+*.xls
+*.zip
+*.parquet
+*.feather
+
+# Local run outputs
+runs/
+archive/
+data_raw/
+data_staging/
+data_analysis/
+
