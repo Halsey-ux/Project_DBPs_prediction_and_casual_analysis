@@ -1,40 +1,40 @@
 # codex.md
 
-## 1. Project Background
+## 1. 项目背景
 
-This project supports dissertation research based on the U.S. EPA SYR4 dataset.
+本项目服务于基于美国 EPA SYR4 数据集的博士论文研究。
 
-The current dissertation focus is the first chapter:
+当前论文重点是第一章：
 
-- use SYR4 as a large-scale real-world regulatory monitoring dataset
-- study regulated disinfection byproducts (DBPs), especially `TTHM` and `HAA5`
-- build an interpretable system-level prediction and risk-analysis framework
+- 将 SYR4 作为大规模真实世界监管监测数据集使用
+- 聚焦受监管消毒副产物（DBPs），尤其是 `TTHM` 和 `HAA5`
+- 构建系统级、可解释的风险识别与预测框架
 
-The project does not treat SYR4 as a fine-scale single-plant mechanistic process database. It treats SYR4 as a real-world monitoring and regulatory data world for DBP risk identification, explanation, and prediction.
+本项目不把 SYR4 视为单厂精细工艺机理数据库，而是将其视为一个真实世界的数据训练场，用来识别高风险场景、筛选稳定驱动因素，并支撑后续实验章节的样品优选。
 
-## 2. Overall Goal
+## 2. 总体目标
 
-The overall project goal is to support a dissertation that links:
+本项目的总体目标是支撑完整论文主线，包括：
 
-- large-scale SYR4-based DBP risk and prediction analysis
-- interpretable feature screening and scenario identification
-- later experimental chapters for targeted or suspect screening under high-risk real-world conditions
+- 基于 SYR4 的 DBP 风险识别与预测
+- 关键驱动因素筛选与可解释分析
+- 为后续靶向/准靶向筛查章节提供现实场景依据
 
-## 3. Current Stage Goal
+## 3. 当前阶段目标
 
-The current stage goal is to build the first-round `TTHM` analysis workflow:
+当前阶段目标是完成第一轮 `TTHM` 分析流程搭建：
 
-- use `TOTAL TRIHALOMETHANES (TTHM).csv` as the main outcome table
-- align a small set of first-round DBP-relevant chemistry variables
-- support baseline Spearman analysis and first-round machine-learning feasibility testing
+- 以 `TOTAL TRIHALOMETHANES (TTHM).csv` 为主结果表
+- 对齐少量第一轮最关键的 DBP 相关参数
+- 构建可用于 Spearman 分析和第一轮机器学习的 analysis-ready 数据集
 
-## 4. Directory Structure
+## 4. 目录结构
 
-Current project root:
+当前项目根目录：
 
 - `D:\Project_DBPs_prediction_and_casual_analysis`
 
-Current local structure:
+当前结构：
 
 ```text
 D:\Project_DBPs_prediction_and_casual_analysis
@@ -48,141 +48,144 @@ D:\Project_DBPs_prediction_and_casual_analysis
 └─ scratch/
 ```
 
-Directory roles:
+各目录作用：
 
 - `docs/`
-  - project notes
-  - research design
-  - project status
-  - data logic documents
+  - 项目说明
+  - 研究设计
+  - 数据逻辑文档
+  - 项目状态文档
 - `scripts/`
-  - data conversion
-  - merge
-  - analysis
-  - modeling scripts
+  - 数据转换脚本
+  - 合并脚本
+  - 分析脚本
+  - 建模脚本
 - `data_local/`
-  - large local-only files
-  - not tracked by Git
+  - 本地大文件
+  - 仅本地使用，不纳入 Git
 - `scratch/`
-  - temporary folders and repair/test outputs
-  - not tracked by Git
+  - 临时目录
+  - 测试/修复输出
+  - 本地缓存类内容，不纳入 Git
 
-## 5. Data Situation
+## 5. 原始数据位置与数据情况
 
-Raw SYR4 data are local and should be treated as read-only input sources.
+原始 SYR4 数据在本地其他路径，当前应视为只读输入源。
 
-Current local source paths:
+当前主要数据源路径：
 
 - `D:\Syr4_Project\syr4_DATA_CSV`
 - `D:\SYR4_Data\syr4_DATA_excel`
 
-Current high-priority first-round data sources:
+当前第一轮重点数据源：
 
-- main table:
+- 主表：
   - `D:\Syr4_Project\syr4_DATA_CSV\SYR4_THMs\TOTAL TRIHALOMETHANES (TTHM).csv`
-- first-round aligned chemistry tables:
+- 第一轮准备对齐的参数表：
   - `PH.csv`
   - `TOTAL ALKALINITY.csv`
   - `TOTAL ORGANIC CARBON.csv`
   - `FREE RESIDUAL CHLORINE (1013).csv`
 
-## 6. Tech Stack
+## 6. 技术栈
 
-Preferred working stack:
+当前优先使用的技术栈：
 
 - Python
 - pandas
 - numpy
 - scipy
 - scikit-learn
-- xgboost / lightgbm when needed
-- shap when needed
-- PowerShell for local file inspection and project operations
-- Git + GitHub for project tracking
+- xgboost / lightgbm（需要时）
+- shap（需要时）
+- PowerShell（本地文件检查与项目操作）
+- Git + GitHub（项目管理）
 
-## 7. Coding and Project Management Conventions
+## 7. 编码与项目管理规范
 
-### 7.1 Raw data policy
+### 7.1 原始数据规范
 
-- raw data are read-only
-- do not overwrite local source SYR4 files
-- do not rename raw source files in place
+- 原始数据只读
+- 不允许原位覆盖本地源数据
+- 不允许在原始数据目录中重命名文件
 
-### 7.2 GitHub policy
+### 7.2 GitHub 管理范围
 
-GitHub should mainly track:
+GitHub 主要管理：
 
-- scripts
-- documentation
-- reports
-- configs
-- lightweight metadata
-- project-level explanatory files
+- 脚本
+- 文档
+- 报告
+- 配置
+- 轻量级元数据
+- 项目级说明文件
 
-GitHub should not directly track:
+GitHub 不直接管理：
 
-- raw SYR4 data
-- large generated analysis tables
-- large temporary outputs
-- local scratch artifacts
+- 原始 SYR4 数据
+- 大型中间分析表
+- 大型临时输出
+- 本地 scratch 结果
 
-### 7.3 codex.md update rule
+### 7.3 `codex.md` 维护规则
 
-`codex.md` is the long-lived project handbook.
+`codex.md` 是项目级长期说明书。
 
-It should be updated after every important project update, including:
+以下情况属于“重要更新”，需要同步更新 `codex.md`：
 
-- script creation or modification
-- meaningful documentation updates
-- completion of a data-processing stage
-- completion of an analysis/modeling stage
-- important restructuring of the project
+- 新增或修改脚本
+- 重要文档更新
+- 完成一轮数据处理
+- 完成一轮分析或建模
+- 项目结构发生重要调整
 
-### 7.4 Git update rule
+### 7.4 Git 提交规则
 
-After every important project update:
+每次重要更新后，都应：
 
-- update `codex.md`
-- create a clear Git commit
-- push to GitHub
+1. 更新 `codex.md`
+2. 进行 Git commit
+3. 推送到 GitHub
 
-Small temporary edits do not require immediate push.
+小型临时修改不要求立即 push，避免提交历史过碎。
 
-### 7.5 Commit message rule
+### 7.5 提交标题规则
 
-Each important update should use a concise and meaningful commit message that reflects the actual change.
+每次重要更新都应使用清晰、准确的 commit message，能够反映实际改动内容。
 
-## 8. Current Progress
+## 8. 当前进展
 
-The project has already completed:
+当前项目已经完成：
 
-- local conversion of SYR4 data into CSV and Excel forms
-- interpretation of the major SYR4 data modules and directory structure
-- clarification of template-based monitoring tables and special-purpose tables
-- initial dissertation chapter-one design
-- initial GitHub connection and repository setup via SSH
-- initial project cleanup and root-directory restructuring
+- 将 SYR4 数据在本地转换为 CSV 和 Excel 形式
+- 梳理了 SYR4 的主要数据模块和目录结构
+- 理清了模板化监测表和特殊用途表的逻辑
+- 明确了 paired microbes/disinfectant residual 文件的用途
+- 完成了第一章初步研究设计
+- 已通过 SSH 建立 GitHub 仓库连接并完成首次推送
+- 已对项目根目录进行第一轮整理
+- 已建立 `codex.md` 作为长期项目说明书
 
-## 9. Latest Update
+## 9. 最近一次更新
 
-Last updated: 2026-03-23
+最后更新时间：2026-03-23
 
-Latest update summary:
+最近更新内容：
 
-- formalized long-term project-management rules
-- created `codex.md` as the project handbook
-- established the rule that important updates must also update `codex.md` and be pushed to GitHub
+- 将 `codex.md` 规范正式落地
+- 明确了后续“重要更新必须同步更新 `codex.md` 并推送 GitHub”的规则
+- 将 `codex.md` 改为中文版本，保留英文路径、字段名和技术术语
 
-Related commit:
+对应提交：
 
-- pending current commit
+- 以当前提交为准
 
-## 10. Next Step
+## 10. 下一步任务
 
-The next concrete step is:
+下一步最具体的工作是：
 
-- build the first-round `TTHM` analysis-ready dataset
-- inspect merge compatibility of `TTHM`, `PH`, `TOTAL ALKALINITY`, `TOTAL ORGANIC CARBON`, and `FREE RESIDUAL CHLORINE`
-- define first-round alignment rules
-- prepare the dataset for baseline Spearman analysis
+- 构建第一轮 `TTHM` analysis-ready 数据集
+- 检查 `TTHM`、`PH`、`TOTAL ALKALINITY`、`TOTAL ORGANIC CARBON`、`FREE RESIDUAL CHLORINE` 的对齐可行性
+- 设计第一轮 merge 规则
+- 为 baseline Spearman 分析做准备
 
