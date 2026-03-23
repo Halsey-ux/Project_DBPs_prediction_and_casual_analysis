@@ -48,6 +48,17 @@ D:\Project_DBPs_prediction_and_casual_analysis
 └─ scratch/
 ```
 
+当前与第一轮 `TTHM` 构建直接相关的本地输出目录：
+
+- `data_local/tthm_first_round/`
+  - `tthm_corechem_dataset.csv`
+  - `tthm_baseline_clean.csv`
+  - `tthm_corechem_merge_report.md`
+  - `tthm_field_audit.csv`
+  - `tthm_missingness_summary.csv`
+  - `tthm_match_summary.csv`
+  - `tthm_predictor_combinations.csv`
+
 各目录作用：
 
 - `docs/`
@@ -165,27 +176,31 @@ GitHub 不直接管理：
 - 已通过 SSH 建立 GitHub 仓库连接并完成首次推送
 - 已对项目根目录进行第一轮整理
 - 已建立 `codex.md` 作为长期项目说明书
+- 已完成第一轮 `TTHM` 主表与 4 张核心化学表的字段兼容性检查
+- 已新增脚本 `scripts/build_tthm_first_round.py`
+- 已在本地生成第一轮 `TTHM` analysis-ready 数据集与 merge 报告
+- 已确认当前数据足以进入 pairwise Spearman 分析与受限版 baseline 机器学习，但不足以直接支持 4 个核心化学变量同时完整的完整案例模型
 
 ## 9. 最近一次更新
 
-最后更新时间：2026-03-23
+最后更新时间：2026-03-23 15:20（Asia/Hong_Kong）
 
 最近更新内容：
 
-- 将 `codex.md` 规范正式落地
-- 明确了后续“重要更新必须同步更新 `codex.md` 并推送 GitHub”的规则
-- 将 `codex.md` 改为中文版本，保留英文路径、字段名和技术术语
+- 完成第一轮 `TTHM` 分析数据集构建脚本 `scripts/build_tthm_first_round.py`
+- 完成 `TTHM` 与 `PH`、`TOTAL ALKALINITY`、`TOTAL ORGANIC CARBON`、`FREE RESIDUAL CHLORINE` 的两级匹配
+- 生成本地输出目录 `data_local/tthm_first_round/` 及其 CSV/Markdown 报告
+- 明确当前匹配覆盖率较低，适合做首轮 Spearman 和受限版 baseline ML，不适合作为高覆盖终版分析库
 
 对应提交：
 
-- 以当前提交为准
+- `build first-round TTHM core chemistry dataset`
 
 ## 10. 下一步任务
 
 下一步最具体的工作是：
 
-- 构建第一轮 `TTHM` analysis-ready 数据集
-- 检查 `TTHM`、`PH`、`TOTAL ALKALINITY`、`TOTAL ORGANIC CARBON`、`FREE RESIDUAL CHLORINE` 的对齐可行性
-- 设计第一轮 merge 规则
-- 为 baseline Spearman 分析做准备
-
+- 基于 `tthm_corechem_dataset.csv` 开始首轮 pairwise Spearman 分析
+- 对 `tthm_baseline_clean.csv` 评估可用于 baseline ML 的特征组合与缺失处理策略
+- 评估是否有必要在下一轮放宽匹配规则，或补充少量高价值变量
+- 在保持“小而干净”的前提下决定第二轮是否加入少量处理工艺或水质背景变量
