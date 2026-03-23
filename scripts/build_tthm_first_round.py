@@ -305,6 +305,51 @@ def build_report(
     facility_day_rows = int((corechem_df["match_level"] == "facility_day").sum())
     strict_only_rows = int((corechem_df["match_level"] == "strict").sum())
 
+    audit_display = audit_df.rename(
+        columns={
+            "table_name": "表名",
+            "path": "路径",
+            "row_count": "总记录数",
+            "column_count": "字段数",
+            "same_columns_as_tthm": "与TTHM字段结构一致",
+            "missing_pwsid": "缺失PWSID",
+            "missing_water_facility_id": "缺失WATER_FACILITY_ID",
+            "missing_sampling_point_id": "缺失SAMPLING_POINT_ID",
+            "missing_sample_collection_date": "缺失SAMPLE_COLLECTION_DATE",
+            "date_parse_failures": "日期解析失败数",
+            "strict_key_unique_rows": "严格键唯一组合数",
+            "facility_day_unique_rows": "设施-日期唯一组合数",
+            "strict_key_duplicate_rows": "严格键重复记录数",
+            "facility_day_duplicate_rows": "设施-日期重复记录数",
+            "non_numeric_value_rows": "VALUE非数值记录数",
+            "analyte_names_top5": "ANALYTE_NAME概况",
+            "unit_top5": "UNIT概况",
+            "detection_limit_unit_top5": "DETECTION_LIMIT_UNIT概况",
+        }
+    )
+    match_summary_display = match_summary_df.rename(
+        columns={
+            "source": "来源表",
+            "source_total_rows": "来源表总记录数",
+            "strict_matched_tthm_rows": "严格匹配成功数",
+            "facility_day_matched_tthm_rows": "同设施同日匹配成功数",
+            "total_matched_tthm_rows": "总匹配成功数",
+            "match_ratio_vs_tthm_rows": "相对TTHM匹配比例",
+            "match_rule_used": "使用规则",
+        }
+    )
+    match_summary_display["使用规则"] = "严格匹配 + 同设施同日回退"
+    missingness_display = missingness_df.rename(
+        columns={"column": "字段", "missing_count": "缺失数", "missing_rate": "缺失率"}
+    )
+    units_display = units_df.rename(
+        columns={
+            "source": "来源表",
+            "raw_unit_top5": "原始UNIT概况",
+            "merged_unit_non_missing": "合并后单位非缺失数",
+        }
+    )
+
     pair_counts = []
     for predictor in [
         "ph_value",
@@ -314,17 +359,20 @@ def build_report(
     ]:
         pair_counts.append(
             {
-                "variable": predictor,
-                "pairwise_non_missing_with_tthm": int(
+                "变量": predictor,
+                "与TTHM同时非缺失记录数": int(
                     (corechem_df["tthm_value"].notna() & corechem_df[predictor].notna()).sum()
                 ),
             }
         )
     pair_df = pd.DataFrame(pair_counts)
+    combination_display = combination_df.rename(
+        columns={"pattern_ph_alk_toc_fcl": "模式(ph_alk_toc_fcl)", "row_count": "记录数"}
+    )
 
     analysis_judgement = [
-        "Spearman: 可以进入下一步，但应以 pairwise complete 的探索性相关分析为主。",
-        "Baseline ML: 只能做受限版本。`tthm_baseline_clean.csv` 采用 `tthm_value` 非缺失且至少 2 个核心化学变量非缺失的子集，适合做第一轮 baseline 和缺失机制评估。",
+        "Spearman：可以进入下一步，但应以 pairwise complete 的探索性相关分析为主。",
+        "Baseline ML：只能做受限版本。`tthm_baseline_clean.csv` 采用 `tthm_value` 非缺失且至少 2 个核心化学变量非缺失的子集，适合做第一轮 baseline 和缺失机制评估。",
     ]
     if int((corechem_df["matched_corechem_count"] == 4).sum()) == 0:
         analysis_judgement.append(
@@ -341,68 +389,62 @@ def build_report(
     ]
 
     lines = [
-        "# TTHM First-Round Core Chemistry Merge Report",
+        "# 第一轮 TTHM 核心化学变量合并报告",
         "",
-        f"- Report generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
-        f"- Output directory: `{OUTPUT_DIR}`",
-        f"- Main table: `{MAIN_PATH}`",
+        f"- 报告生成时间：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+        f"- 输出目录：`{OUTPUT_DIR}`",
+        f"- 主结果表：`{MAIN_PATH}`",
         "",
-        "## 1. Scope",
+        "## 1. 本轮范围",
         "",
-        "This round is intentionally limited to `TTHM + PH + TOTAL ALKALINITY + TOTAL ORGANIC CARBON + FREE RESIDUAL CHLORINE`.",
-        "It is designed for first-round Spearman screening, feature screening, and constrained baseline machine learning.",
+        "本轮有意限制在 `TTHM + PH + TOTAL ALKALINITY + TOTAL ORGANIC CARBON + FREE RESIDUAL CHLORINE`。",
+        "目标是服务第一轮 Spearman 筛查、特征筛选和受限版 baseline 机器学习。",
         "",
-        "## 2. Alignment rules",
+        "## 2. 对齐规则",
         "",
-        "Priority 1: strict key match on `PWSID + WATER_FACILITY_ID + SAMPLING_POINT_ID + SAMPLE_COLLECTION_DATE`.",
-        "Priority 2: facility-day match on `PWSID + WATER_FACILITY_ID + SAMPLE_COLLECTION_DATE`.",
-        "No month-level or quarter-level relaxation is used in this round.",
+        "优先级 1：严格匹配 `PWSID + WATER_FACILITY_ID + SAMPLING_POINT_ID + SAMPLE_COLLECTION_DATE`。",
+        "优先级 2：同设施同日匹配 `PWSID + WATER_FACILITY_ID + SAMPLE_COLLECTION_DATE`。",
+        "本轮不使用按月或按季度放宽匹配。",
         "",
-        "## 3. Field compatibility audit",
+        "## 3. 字段兼容性审计",
         "",
-        to_markdown_table(audit_df),
+        to_markdown_table(audit_display),
         "",
-        "## 4. Merge summary",
+        "## 4. 合并结果汇总",
         "",
-        to_markdown_table(match_summary_df),
+        to_markdown_table(match_summary_display),
         "",
-        "## 5. Missingness of analysis columns",
+        "## 5. 分析字段缺失情况",
         "",
-        to_markdown_table(missingness_df),
+        to_markdown_table(missingness_display),
         "",
-        "## 6. Unit situation",
+        "## 6. 单位情况",
         "",
-        to_markdown_table(units_df),
+        to_markdown_table(units_display),
         "",
-        "## 7. Predictor overlap with numeric TTHM",
+        "## 7. 与数值型 TTHM 的成对非缺失情况",
         "",
         to_markdown_table(pair_df),
         "",
-        "## 8. Predictor combination counts",
+        "## 8. 核心化学变量组合覆盖情况",
         "",
-        to_markdown_table(combination_df),
+        to_markdown_table(combination_display),
         "",
-        "## 9. Dataset readiness",
+        "## 9. 当前数据集可用性",
         "",
-        f"- Total TTHM rows in merged dataset: {total_rows}",
-        f"- Numeric `tthm_value` rows: {numeric_tthm_rows} ({format_pct(numeric_tthm_rows, total_rows)})",
-        f"- Rows with at least 1 matched core chemistry variable: {any_corechem_rows} ({format_pct(any_corechem_rows, total_rows)})",
-        f"- Rows with at least 2 matched core chemistry variables: {two_plus_rows} ({format_pct(two_plus_rows, total_rows)})",
-        f"- Rows using only strict matches: {strict_only_rows} ({format_pct(strict_only_rows, total_rows)})",
-        f"- Rows involving facility-day fallback: {facility_day_rows} ({format_pct(facility_day_rows, total_rows)})",
-        f"- `tthm_baseline_clean.csv` rows: {len(baseline_df)}",
+        f"- 合并后总 TTHM 记录数：{total_rows}",
+        f"- 数值型 `tthm_value` 记录数：{numeric_tthm_rows}（{format_pct(numeric_tthm_rows, total_rows)}）",
+        f"- 至少匹配到 1 个核心化学变量的记录数：{any_corechem_rows}（{format_pct(any_corechem_rows, total_rows)}）",
+        f"- 至少匹配到 2 个核心化学变量的记录数：{two_plus_rows}（{format_pct(two_plus_rows, total_rows)}）",
+        f"- 仅使用严格匹配的记录数：{strict_only_rows}（{format_pct(strict_only_rows, total_rows)}）",
+        f"- 使用同设施同日回退匹配的记录数：{facility_day_rows}（{format_pct(facility_day_rows, total_rows)}）",
+        f"- `tthm_baseline_clean.csv` 记录数：{len(baseline_df)}",
         "",
-        "## 10. Important data issues",
+        "## 10. 重要数据问题",
         "",
     ]
     lines.extend(f"- {issue}" for issue in data_issues)
-    lines.extend(
-        [
-            "",
-            "## 11. Judgement for next analysis step",
-            "",
-        ]
-    )
+    lines.extend(["", "## 11. 对下一步分析的判断", ""])
     lines.extend(f"- {item}" for item in analysis_judgement)
     return "\n".join(lines) + "\n"
 
@@ -614,7 +656,7 @@ def main() -> None:
             corechem_df,
             baseline_df,
         ),
-        encoding="utf-8",
+        encoding="utf-8-sig",
     )
 
     print(f"Wrote: {corechem_path}")

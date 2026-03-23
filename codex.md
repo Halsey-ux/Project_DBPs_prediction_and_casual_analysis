@@ -164,6 +164,12 @@ GitHub 不直接管理：
 
 每次重要更新都应使用清晰、准确的 commit message，能够反映实际改动内容。
 
+### 7.6 Markdown 文档语言规则
+
+- 后续新增或更新的 `.md` 文件默认使用中文撰写
+- 如需保留英文，应仅限于路径、字段名、代码标识符、技术术语或必要引用
+- 自动生成的 Markdown 报告也应优先输出中文标题、中文说明和中文结论
+
 ## 8. 当前进展
 
 当前项目已经完成：
@@ -183,18 +189,17 @@ GitHub 不直接管理：
 
 ## 9. 最近一次更新
 
-最后更新时间：2026-03-23 15:20（Asia/Hong_Kong）
+最后更新时间：2026-03-23 16:25（Asia/Hong_Kong）
 
 最近更新内容：
 
-- 完成第一轮 `TTHM` 分析数据集构建脚本 `scripts/build_tthm_first_round.py`
-- 完成 `TTHM` 与 `PH`、`TOTAL ALKALINITY`、`TOTAL ORGANIC CARBON`、`FREE RESIDUAL CHLORINE` 的两级匹配
-- 生成本地输出目录 `data_local/tthm_first_round/` 及其 CSV/Markdown 报告
-- 明确当前匹配覆盖率较低，适合做首轮 Spearman 和受限版 baseline ML，不适合作为高覆盖终版分析库
+- 将 `tthm_corechem_merge_report.md` 的生成逻辑改为中文版 Markdown 报告
+- 在项目规范中明确：后续新增或更新的 `.md` 文件默认使用中文
+- 重新生成第一轮 `TTHM` 合并报告，统一中文标题、中文章节和中文结论
 
 对应提交：
 
-- `build first-round TTHM core chemistry dataset`
+- `rewrite TTHM merge report in Chinese`
 
 ## 10. 下一步任务
 
