@@ -257,7 +257,7 @@ GitHub 不直接管理：
 
 ## 9. 最近一次更新
 
-最后更新时间：2026-03-31 10:10（Asia/Hong_Kong）
+最后更新时间：2026-03-31 10:18（Asia/Hong_Kong）
 
 最近更新内容：
 
@@ -272,6 +272,7 @@ GitHub 不直接管理：
 - 同步更新 `codex.md`，将 V3.5 过渡更新正式记入项目级说明书
 - 补强 `scripts/build_v3_5_pws_year_ml_ready.py` 的 CSV 回读校验：不再只检查行列一致，而是按显式 schema 回读并校验关键字段 dtype，防止标签列、treatment 二值列和整数计数列在后续 V4 阶段发生类型漂移
 - 新增统一读取模块 `scripts/io_v4_ml_ready.py`，正式固定 V4 `ml_ready` 表的 schema、统一读取函数与类型校验入口，后续 V4 脚本不再直接裸用 `pd.read_csv`
+- 已验证统一读取函数可将 `tthm_regulatory_exceed_label`、`tthm_warning_label`、`has_disinfection_process` 恢复为 `Int8`，并将 `tthm_months_with_data` 恢复为 `Int64`
 
 对应提交：
 
