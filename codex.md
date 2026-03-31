@@ -1,4 +1,4 @@
-﻿# codex.md
+# codex.md
 
 ## 1. 项目背景
 
@@ -22,12 +22,12 @@
 
 ## 3. 当前阶段目标
 
-当前阶段目标是完成第一章第一部分的 DBP 数据基础工作：
+当前阶段目标是完成第一章第一部分从 V3 原型主表到 V4 机器学习输入层的过渡工作：
 
-- 明确 DBP 主线的研究范围与变量体系
-- 梳理核心数据表关系与合理 join 粒度
-- 正式审计严格样本级、设施-月份级、系统-年份级三层数据可用性
-- 输出可直接写入论文的结构化文档，并为后续 ML / 机制分析主线划定数据边界
+- 固定第三层 `TTHM` 主线的主结果变量、法规标签、预警标签与 `level1/level2/level3` 分层
+- 产出可直接进入 V4 的 `V4_pws_year_ml_ready.csv`
+- 完成机器学习输入层所需的最小必要文档、字段字典与基础清洗口径
+- 为后续 V4 正式建模阶段划清输入边界、缺失处理边界与禁止误用规则
 
 ## 4. 目录结构
 
@@ -49,17 +49,23 @@ D:\Project_DBPs_prediction_and_casual_analysis
 └─ scratch/
 ```
 
-当前与第一轮 `TTHM` 构建直接相关的本地输出目录：
+当前与 DBP 主线直接相关的本地输出目录：
 
 - `data_local/tthm_first_round/`
-  - 当前用于存放按版本重新生成的本地数据与分析结果
-  - 旧版不符合要求的数据与结果已清理，不再作为当前版本输入
+  - 历史第一轮本地结果目录
+  - 旧版不符合当前要求的数据与结果已不再作为当前版本输入
 - `data_local/V1_TTHM_strict_spearman_base_data/`
-  - 当前 V1 版本的专用本地输出目录
-  - 用于存放从原始 SYR4 数据重新生成的严格样本级母表、Spearman 输入表、清洗说明与结果报告
+  - V1 严格样本级基线专用目录
+  - 用于存放严格样本级母表、Spearman 输入表、清洗说明与结果报告
 - `data_local/V2_Chapter1_Part1_DBP_Data_Foundation/`
-  - 当前第一章第一部分的专用本地输出目录
+  - V2 数据基础审计目录
   - 用于存放三层级可用性审计结果、关系摘要、变量覆盖统计与中文审计报告
+- `data_local/V3_Chapter1_Part1_Prototype_Build/`
+  - V3 原型主表目录
+  - 用于存放 `V3_facility_month_master.csv`、`V3_pws_year_master.csv` 及相关摘要表
+- `data_local/V4_Chapter1_Part1_ML_Ready/`
+  - V3.5 机器学习输入层目录
+  - 用于存放 `V4_pws_year_ml_ready.csv`
 
 各目录作用：
 
@@ -95,7 +101,7 @@ D:\Project_DBPs_prediction_and_casual_analysis
 
 - 主表：
   - `D:\Syr4_Project\syr4_DATA_CSV\SYR4_THMs\TOTAL TRIHALOMETHANES (TTHM).csv`
-- 第一轮准备对齐的参数表：
+- 重点参数表：
   - `PH.csv`
   - `TOTAL ALKALINITY.csv`
   - `TOTAL ORGANIC CARBON.csv`
@@ -208,52 +214,88 @@ GitHub 不直接管理：
 - 已生成 `V1_tthm_strict_cleaning_notes.md` 和 `V1_tthm_spearman_report.md`
 - 已确认 V1 严格样本级母表记录数为 `1,056,301`
 - 已确认至少匹配到 1 个核心预测变量的严格样本数为 `16,352`，至少匹配到 2 个核心预测变量的样本数为 `2,246`
-- 已确认 4 个核心预测变量在严格样本级下同时完整的记录数为 `0`，因此当前 V1 更适合作为保守基线而非完整多变量底表
+- 已确认 4 个核心预测变量在严格样本级下同时完整的记录数为 `0`
 - 已完成第一层保守版 Spearman 结果计算，当前相关方向表现为：`TOC` 与 `TTHM` 中等正相关、`TOTAL ALKALINITY` 与 `TTHM` 中等负相关、`FREE RESIDUAL CHLORINE` 与 `TTHM` 弱负相关、`PH` 与 `TTHM` 相关性很弱
 - 已新增脚本 `scripts/build_chapter1_part1_dbp_foundation.py`
-- 已生成 `data_local/V2_Chapter1_Part1_DBP_Data_Foundation/` 下的源文件清单、三层级摘要、变量覆盖统计、关系摘要与中文审计报告
+- 已生成 V2 数据基础审计结果与中文审计报告
 - 已新增文档 `docs/第一章第一部分_DBP数据基础与分析层级设计.md`
 - 已正式完成第一章第一部分的结构化产出，包括目标定位、变量环境意义框架、核心表关系、三层级数据可用性比较、V1 正式定位与后续数据路线图
 - 已确认严格样本级下 `TTHM + pH + 总碱度 + TOC + 游离余氯` 完整样本数仍为 `0`
 - 已确认设施-月份级下上述核心四变量与 `TTHM` 的 pairwise 重合度有所改善，但完整共同非缺失单元仍为 `0`
-- 已确认系统-年份级下 `TTHM + pH + 总碱度 + TOC + 游离余氯` 完整单元数为 `60`，更适合作为全国机器学习主表候选层级
+- 已确认系统-年份级下 `TTHM + pH + 总碱度 + TOC + 游离余氯` 完整单元数为 `60`
 - 已确认 `Paired TOC-Alkalinity` 仅与 `306` 个 `TTHM` 设施-月份键重合、与 `140` 个 `HAA5` 设施-月份键重合，更适合作为专题化 reduced dataset 而非通用主表
 - 已明确 `HAA5` 应与 `TTHM` 平行纳入同一三层级分析框架，而不是后置补充
+- 已完成 V3 第二层原型表 `V3_facility_month_master.csv`
+- 已完成 V3 第三层原型表 `V3_pws_year_master.csv`
+- 已新增文档 `docs/V3_facility_month_dictionary.md`
+- 已新增文档 `docs/V3_facility_month_build_notes.md`
+- 已新增文档 `docs/V3_pws_year_dictionary.md`
+- 已新增文档 `docs/V3_pws_year_build_notes.md`
+- 已新增文档 `docs/V3_prototype_audit_report.md`
+- 已新增文档 `docs/V3_pws_year_ML字段筛选规范.md`
+- 已明确：进入 V4 之前，V3 还需要完成一个最后的小更新，即用简洁直观的方式固定两张 V3 主表相对于原始 SYR4 数据的变量映射法则、缺失语义、样本分层规则与禁止误用规则
+- 已新增一份专用 prompt 任务定义，用于指导新 Codex 会话专门完成上述 V3 收尾更新
+- 已新增文档 `docs/V3_Raw Data Mapping Rules.md`
+- 已正式固定 `V3_facility_month_master` 与 `V3_pws_year_master` 相对于原始 SYR4 的字段来源、聚合规则、缺失语义、样本分层规则与禁止误用规则
+- 已明确第三层进入 V4 时应采用“全国主模型样本 / 加强模型样本 / 高信息模型样本”三档分层，并保留 `A_ready_for_national_ml` 作为更严格验收子集
+- 已明确第二层继续作为机制分析与高信息小模型补充线，而不是替代第三层全国主表线
+- 已明确在正式进入 V4 之前，需要增加一次 V3.5 过渡更新，用于构建第三层机器学习输入底座 `V4_pws_year_ml_ready.csv`
+- 已明确 V3.5 只围绕第三层 `TTHM` 主线展开，先冻结主结果变量、标签规则、`level1/2/3` 分层、缺失标记与基础清洗口径
+- 已新增 V3.5 专用执行文档 `docs/V3_5_V4_ML_Ready_Codex_Prompt.md`
+- 已新增脚本 `scripts/build_v3_5_pws_year_ml_ready.py`
+- 已生成 `data_local/V4_Chapter1_Part1_ML_Ready/V4_pws_year_ml_ready.csv`
+- 已新增文档 `docs/V3_5_pws_year_ml_ready_build_notes.md`
+- 已新增文档 `docs/V3_5_pws_year_ml_ready_dictionary.md`
+- 已正式固定第三层 `TTHM` 主结果变量为 `tthm_sample_weighted_mean_ug_l`
+- 已正式固定 `tthm_regulatory_exceed_label`（`>=80 ug/L`）与 `tthm_warning_label`（`>=60 ug/L`）两类标签口径，并明确 `60 ug/L` 仅为预警阈值
+- 已正式固定 `level1 / level2 / level3` 为第三层机器学习样本分层命名，且满足“`level3` 包含于 `level2`，`level2` 包含于 `level1`”
+- 已为 `ph`、`alkalinity`、`toc`、`free_chlorine` 与 `total_chlorine` 增加缺失标记列，并保留原始缺失值不做覆盖式插补
+- 已确认 `V4_pws_year_ml_ready.csv` 行数为 `259,500`、字段数为 `38`
+- 已确认 `level1` 样本数为 `199,802`、`level2` 样本数为 `26,975`、`level3` 样本数为 `6,193`
+- 已确认 `tthm_regulatory_exceed_label=1` 的系统-年份样本数为 `5,618`，`tthm_warning_label=1` 的系统-年份样本数为 `19,853`
+- 已明确 `annual_match_quality_tier` 保留在 `ml_ready` 表内，但默认不进入第一版主模型特征
 
-## 9. ??????
+## 9. 最近一次更新
 
-???????2026-03-26 22:31?Asia/Hong_Kong?
+最后更新时间：2026-03-31 10:10（Asia/Hong_Kong）
 
-???????
+最近更新内容：
 
-- ???? `scripts/build_v3_chapter1_part1_prototypes.py`???????????????????????????????? V3 ???
-- ???? `scripts/render_v3_prototype_docs.py`?? V3 ???????????????????????? Markdown ??
-- ? `data_local/V3_Chapter1_Part1_Prototype_Build/` ??? 11 ?????????`V3_facility_month_master.csv`?`V3_pws_year_master.csv` ???????
-- ? `docs/` ??? `V3_facility_month_dictionary.md`?`V3_facility_month_build_notes.md`?`V3_pws_year_dictionary.md`?`V3_pws_year_build_notes.md` ? `V3_prototype_audit_report.md`
-- ?? V3 ???????????????????????????????????????????????????????????????????????????? ML ??
-- ???? `codex.md`??? V3 ?????????????????????????
+- 新增脚本 `scripts/build_v3_5_pws_year_ml_ready.py`，用于从第三层 `V3_pws_year_master.csv` 派生 V3.5 机器学习输入层
+- 新增本地输出 `data_local/V4_Chapter1_Part1_ML_Ready/V4_pws_year_ml_ready.csv`
+- 新增文档 `docs/V3_5_pws_year_ml_ready_build_notes.md` 与 `docs/V3_5_pws_year_ml_ready_dictionary.md`
+- 正式固定第三层 `TTHM` 主结果变量为 `tthm_sample_weighted_mean_ug_l`
+- 正式固定 `tthm_regulatory_exceed_label` 与 `tthm_warning_label`，并明确 `80 ug/L` 为法规阈值、`60 ug/L` 仅为预警阈值
+- 正式固定 `level1 / level2 / level3` 样本分层、`ml_level_max` 最高层级标记与 5 个机制变量缺失标记列
+- 完成基础清洗边界冻结：校验主键唯一、统一字段类型、保留原始缺失、禁止覆盖式插补、禁止目标缺失样本误写标签
+- 确认 `V4_pws_year_ml_ready.csv` 行数为 `259,500`、字段数为 `38`，可被 pandas 稳定回读
+- 同步更新 `codex.md`，将 V3.5 过渡更新正式记入项目级说明书
+- 补强 `scripts/build_v3_5_pws_year_ml_ready.py` 的 CSV 回读校验：不再只检查行列一致，而是按显式 schema 回读并校验关键字段 dtype，防止标签列、treatment 二值列和整数计数列在后续 V4 阶段发生类型漂移
+- 新增统一读取模块 `scripts/io_v4_ml_ready.py`，正式固定 V4 `ml_ready` 表的 schema、统一读取函数与类型校验入口，后续 V4 脚本不再直接裸用 `pd.read_csv`
 
-?????
+对应提交：
 
-- ????????? Git ?????
+- 待用户确认是否执行 Git 提交与推送
 
-## 10. ?????
+## 10. 下一步任务
 
-???????????
+下一步最具体的工作是：
 
-- ?? `V3_pws_year_master` ???? ML ??????????????????/??????
-- ? `TTHM` ? `HAA5` ?????????????????????????????????
-- ?? `V3_facility_month_master` ????????????????????????????????????????
-- ? treatment ?????????????????/????????????????
-- ???????????????????? ML ???????????????????????
+- 基于 `data_local/V4_Chapter1_Part1_ML_Ready/V4_pws_year_ml_ready.csv` 进入 V4 正式建模准备阶段
+- 明确第一版 `TTHM` 年度模型的任务拆分：回归主模型、法规阈值分类模型与预警阈值分类模型
+- 按 `level1 / level2 / level3` 三档样本分别制定训练/验证/测试切分、编码与缺失处理方案
+- 先以 baseline 特征集启动全国主模型，再与增强特征集和默认不入模字段做对照实验
+- 保持第二层 `facility-month` 机制线并行，但不与第三层全国主模型线混表
+
+---
 
 ## V2_Chapter1_Part1_Mainline_Update
 
 ### 当前主线调整
 
-- 当前已明确：整个大论文第一章的主线采用“方案 A”，即先做数据基础、变量环境意义、表结构关系、分层设计与数据可用性评估。
-- 当前已明确：风险场景识别（方案 B）不作为第一章总框架，而作为后续探究阶段嵌入到第一章主线之后的应用思想。
-- 当前已明确：第一章第一部分的任务不是直接建模，不是直接做因果分析，也不是直接做全国风险场景识别，而是为这些工作建立可信的数据基础和方法边界。
+- 当前已明确：整个大论文第一章的主线采用“方案 A”，即先做数据基础、变量环境意义、表结构关系、分层设计与数据可用性评估
+- 当前已明确：风险场景识别（方案 B）不作为第一章总框架，而作为后续探究阶段嵌入到第一章主线之后的应用思想
+- 当前已明确：第一章第一部分的任务不是直接建模，不是直接做因果分析，也不是直接做全国风险场景识别，而是为这些工作建立可信的数据基础和方法边界
 
 ### 第一章第一部分当前定义
 
@@ -272,14 +314,14 @@ GitHub 不直接管理：
 
 ### 当前必须遵守的研究判断
 
-- SYR4 的优势在于全国尺度、真实监管场景、多层级结构、结果变量与机制变量并存。
-- SYR4 的劣势在于缺失严重且非随机、监测不是为研究设计、时间不连续、处理信息不完整。
-- 严格样本级四键对齐（PWSID + WATER_FACILITY_ID + SAMPLING_POINT_ID + SAMPLE_COLLECTION_DATE）适合作为保守基线和可拼接性审计，不适合作为后续主建模底表。
+- SYR4 的优势在于全国尺度、真实监管场景、多层级结构、结果变量与机制变量并存
+- SYR4 的劣势在于缺失严重且非随机、监测不是为研究设计、时间不连续、处理信息不完整
+- 严格样本级四键对齐（PWSID + WATER_FACILITY_ID + SAMPLING_POINT_ID + SAMPLE_COLLECTION_DATE）适合作为保守基线和可拼接性审计，不适合作为后续主建模底表
 - 后续主分析的数据方向已明确为两条：
   - 全国广覆盖主表：PWS-year
   - 高信息机制子样本：PWS-facility-month
-- 机器学习和因果分析不能共用同一套口径直接硬做，必须分层设计。
-- 当前阶段重点是建立可信数据产品和研究边界，而不是寻找最强相关性。
+- 机器学习和因果分析不能共用同一套口径直接硬做，必须分层设计
+- 当前阶段重点是建立可信数据产品和研究边界，而不是寻找最强相关性
 
 ### 当前第一章的分层框架
 
@@ -319,89 +361,132 @@ GitHub 不直接管理：
   - 严格样本级保守基线
   - 样本级可拼接性审计
   - 第一层 sanity check
-- 它的价值在于证明：在严格样本级口径下，SYR4 中 TTHM 与其他核心变量的跨表重合度有限。
-- 它的局限在于：不能直接承担后续多变量主建模任务，也不能直接代表后续分层分析的主数据底表。
+- 它的价值在于证明：在严格样本级口径下，SYR4 中 TTHM 与其他核心变量的跨表重合度有限
+- 它的局限在于：不能直接承担后续多变量主建模任务，也不能直接代表后续分层分析的主数据底表
 
 ### 当前进展与下一步
 
-- 当前已完成：围绕第一章整体路线的重新梳理，并明确“方案 A 为主、方案 B 为辅”的整体课题框架。
-- 当前已完成：第一章第一部分的正式结构化产出，包括变量环境意义、核心表关系、三层级可用性比较、V1 学术定位、后续数据路线图、论文提纲与执行清单。
-- 当前新增：已形成独立的 V2_ 开头 prompt 文档，并已据此完成第一章第一部分的执行与审计。
-- 下一步将进入：`PWS-year` 全国主表原型构建、`PWS-facility-month` 机制表原型构建，以及 treatment 解释变量摘要化。
+- 当前已完成：围绕第一章整体路线的重新梳理，并明确“方案 A 为主、方案 B 为辅”的整体课题框架
+- 当前已完成：第一章第一部分的正式结构化产出，包括变量环境意义、核心表关系、三层级可用性比较、V1 学术定位、后续数据路线图、论文提纲与执行清单
+- 当前新增：已形成独立的 V2_ 开头 prompt 文档，并已据此完成第一章第一部分的执行与审计
+- 下一步将进入：`PWS-year` 全国主表原型构建、`PWS-facility-month` 机制表原型构建，以及 treatment 解释变量摘要化
 
 ---
 
 ## V3_Chapter1_Part1_Prototype_Build_Update
 
-### ??????
+### 当前定位
 
-- ????? V3 ??????????????????????????????????????????
-- ??????V3 ????????????????????????????????????????????????
-- ?? V3 ?????????????????????????????????????????????
+- V3 阶段已经把第二层和第三层从审计结论正式落地为两张可复用的原型主表
+- V3 收尾所需的原始数据映射法则、缺失语义、样本分层规则与禁止误用规则已经固定完成
+- 当前项目已从 V3 原型主表阶段进入 V3.5 机器学习输入层阶段，为 V4 正式建模做准备
 
-### V3 ???????
+### V3 主要产物
 
-#### 1. ???????V3_facility_month_master
+#### 1. 第二层原型表：`V3_facility_month_master`
 
-??
-- pwsid + water_facility_id + year + month
+键：
+- `pwsid + water_facility_id + year + month`
 
-?????
-- ??? `data_local/V3_Chapter1_Part1_Prototype_Build/V3_facility_month_master.csv`
-- ??? 11 ????????? `facility_month_source_summary_catalog.csv`
-- ??? `docs/V3_facility_month_dictionary.md`
-- ??? `docs/V3_facility_month_build_notes.md`
+文件：
+- `data_local/V3_Chapter1_Part1_Prototype_Build/V3_facility_month_master.csv`
+- `docs/V3_facility_month_dictionary.md`
+- `docs/V3_facility_month_build_notes.md`
 
-?????
-- ???`1,442,728`
-- ????`98`
-- ??????`0`
-- `TTHM` ???`549,730`
-- `HAA5` ???`481,761`
-- `TTHM + ?? 2 ?????` ???`3,811`
-- `TTHM + 4 ???????` ???`0`
+当前状态：
+- 行数：`1,442,728`
+- 字段数：`98`
+- 主键重复数：`0`
+- `TTHM` 非缺失单元：`549,730`
+- `HAA5` 非缺失单元：`481,761`
+- `TTHM + 至少 2 个核心变量`：`3,811`
+- `TTHM + 4 个核心变量全齐`：`0`
 
-???
-- ??????????
-- ????????????
-- ?????????? pairwise ????
+当前定位：
+- 用作后续高风险场景内部分析和小模型机制分析的起点
+- 不作为全国统一全变量宽表
+- 更适合模块化变量集、pairwise 或小模型策略
 
-#### 2. ???????V3_pws_year_master
+#### 2. 第三层原型表：`V3_pws_year_master`
 
-??
-- pwsid + year
+键：
+- `pwsid + year`
 
-?????
-- ??? `data_local/V3_Chapter1_Part1_Prototype_Build/V3_pws_year_master.csv`
-- ??? `docs/V3_pws_year_dictionary.md`
-- ??? `docs/V3_pws_year_build_notes.md`
-- ??? `docs/V3_prototype_audit_report.md`
+文件：
+- `data_local/V3_Chapter1_Part1_Prototype_Build/V3_pws_year_master.csv`
+- `docs/V3_pws_year_dictionary.md`
+- `docs/V3_pws_year_build_notes.md`
+- `docs/V3_prototype_audit_report.md`
 
-?????
-- ???`259,500`
-- ????`130`
-- ??????`0`
-- `TTHM` ??-??????`199,802`
-- `HAA5` ??-??????`165,379`
-- `TTHM + ?? 2 ?????` ????`26,975`
-- `TTHM + 4 ???????` ????`60`
+当前状态：
+- 行数：`259,500`
+- 字段数：`130`
+- 主键重复数：`0`
+- `TTHM` 系统-年份单元：`199,802`
+- `HAA5` 系统-年份单元：`165,379`
+- `TTHM + 至少 2 个核心变量`：`26,975`
+- `TTHM + 4 个核心变量全齐`：`60`
 
-???
-- ??????????
-- ???????????
-- ??????????
+当前定位：
+- 用作全国机器学习主表原型
+- 适合先做广覆盖 baseline 和分层主模型
+- 不适合承担细粒度机制解释
 
-### V3 ?????????
+### V3 当前方法判断
 
-- ??? strict_sample ????????????????????????????
-- ??? facility-month ????????????????????????????????????????????
-- ????????????? `TTHM + 4 ???????` ???-????? `0`?????????????????????????pairwise ???????
-- ??? pws-year ??????????????????????????????????????????? ML ????????
-- ????????????????????????????????????????????
+- 第一层 strict_sample 继续保留为保守基线和可拼接性审计层，不进入主建模
+- 第二层 facility-month 已经足够作为机制分析起点，但不能被误写成完整多变量宽表
+- 第三层 pws-year 已经足够作为全国机器学习主表原型，但进入 V4 前仍需先固定字段映射法则和数据契约
+- 当前最重要的不是立刻追求模型性能，而是先确保两张主表相对于原始 SYR4 的字段来源、聚合规则、缺失语义和误用边界被明确记录
 
-### V3 ?????????
+### V3 收尾状态
 
-- ?????? V3 ????????????????????????????
-- ???????????????????????????????????????????????
-- ?????????????????????????????????
-- ????????????????????? ML ?????????????? / ???????????????????
+- `docs/V3_Raw Data Mapping Rules.md` 已完成两张 V3 主表相对于原始 SYR4 的字段来源与聚合规则固化
+- 已固定单位、缺失值语义、样本分层规则与禁止误用规则
+- V3 已正式收尾完成，后续工作已切换到 V3.5 `ml_ready` 派生表构建与 V4 模型任务定义
+
+---
+
+## V3_5_V4_ML_Ready_Update
+
+### 当前定位
+
+- V3.5 阶段的目标不是直接追求模型性能，而是把第三层原型主表整理成可直接进入 V4 的机器学习输入层
+- 本阶段只围绕第三层 `TTHM` 主线展开，不把第二层 `facility-month` 字段混入全国主模型输入表
+- 本阶段已经完成主结果变量、标签规则、样本分层、缺失标记和基础清洗边界的冻结
+
+### V3.5 主要产物
+
+#### 1. 第三层机器学习输入表：`V4_pws_year_ml_ready`
+
+键：
+- `pwsid + year`
+
+文件：
+- `data_local/V4_Chapter1_Part1_ML_Ready/V4_pws_year_ml_ready.csv`
+- `docs/V3_5_pws_year_ml_ready_build_notes.md`
+- `docs/V3_5_pws_year_ml_ready_dictionary.md`
+- `scripts/build_v3_5_pws_year_ml_ready.py`
+
+当前状态：
+- 行数：`259,500`
+- 字段数：`38`
+- 主键重复数：`0`
+- `level1` 样本数：`199,802`
+- `level2` 样本数：`26,975`
+- `level3` 样本数：`6,193`
+- `tthm_regulatory_exceed_label=1`：`5,618`
+- `tthm_warning_label=1`：`19,853`
+
+### 当前方法判断
+
+- 第三层 `ml_ready` 输入层已经具备进入 V4 正式建模的最小必要条件
+- `tthm_sample_weighted_mean_ug_l` 已被固定为唯一连续型主结果变量，避免多目标并列造成口径漂移
+- `annual_match_quality_tier` 保留在表中，但默认不进入第一版主模型
+- `state_code` 仅作为候选 baseline 特征保留，不提前写死为必须入模变量
+- treatment 二值字段保留原始缺失，不在 V3.5 阶段用 0 强行覆盖未知状态
+
+### V4 进入条件
+
+- 下一步可以围绕 `V4_pws_year_ml_ready.csv` 开始训练/验证/测试切分、编码、缺失处理和 baseline 建模
+- V4 阶段仍需继续遵守禁止目标泄漏、禁止同源 `tthm_*` 摘要字段回灌模型、禁止把第二层机制线混成第三层全国宽表等规则
