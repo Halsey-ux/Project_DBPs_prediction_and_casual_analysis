@@ -18,7 +18,13 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(PROJECT_ROOT / "scripts") not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
 
-from io_v4_ml_ready import DEFAULT_BASELINE_FEATURES, build_tthm_anchored_risk_label, read_v4_ml_ready_csv, validate_v4_ml_ready_schema
+from io_v4_ml_ready import (
+    DEFAULT_BASELINE_FEATURES,
+    STRING_COLUMNS,
+    build_tthm_anchored_risk_label,
+    read_v4_ml_ready_csv,
+    validate_v4_ml_ready_schema,
+)
 
 
 INPUT_PATH = PROJECT_ROOT / "data_local" / "V4_Chapter1_Part1_ML_Ready" / "V4_pws_year_ml_ready.csv"
@@ -61,11 +67,18 @@ def build_anchored_dataset(df: pd.DataFrame) -> pd.DataFrame:
     return subset
 
 
-def build_baseline_pipeline() -> Pipeline:
-    numeric_features = ["retail_population_served", "n_facilities_in_master"]
-    categorical_features = ["system_type", "source_water_type"]
-    preprocessor = ColumnTransformer(
-        transformers=[
+def infer_feature_groups(feature_columns: list[str]) -> tuple[list[str], list[str]]:
+    categorical_features = [column for column in feature_columns if column in STRING_COLUMNS]
+    numeric_features = [column for column in feature_columns if column not in categorical_features]
+    return numeric_features, categorical_features
+
+
+def build_logistic_regression_pipeline(feature_columns: list[str]) -> Pipeline:
+    numeric_features, categorical_features = infer_feature_groups(feature_columns)
+    transformers: list[tuple[str, Pipeline, list[str]]] = []
+
+    if numeric_features:
+        transformers.append(
             (
                 "numeric",
                 Pipeline(
@@ -75,7 +88,11 @@ def build_baseline_pipeline() -> Pipeline:
                     ]
                 ),
                 numeric_features,
-            ),
+            )
+        )
+
+    if categorical_features:
+        transformers.append(
             (
                 "categorical",
                 Pipeline(
@@ -85,8 +102,14 @@ def build_baseline_pipeline() -> Pipeline:
                     ]
                 ),
                 categorical_features,
-            ),
-        ]
+            )
+        )
+
+    if not transformers:
+        raise ValueError("At least one feature column is required to build the pipeline.")
+
+    preprocessor = ColumnTransformer(
+        transformers=transformers
     )
     model = LogisticRegression(
         class_weight="balanced",
@@ -97,10 +120,16 @@ def build_baseline_pipeline() -> Pipeline:
     return Pipeline(steps=[("preprocessor", preprocessor), ("model", model)])
 
 
-def prepare_feature_frame(df: pd.DataFrame) -> pd.DataFrame:
-    output = df[DEFAULT_BASELINE_FEATURES].copy().astype(object)
-    numeric_columns = ["retail_population_served", "n_facilities_in_master"]
-    categorical_columns = ["system_type", "source_water_type"]
+def build_baseline_pipeline() -> Pipeline:
+    return build_logistic_regression_pipeline(DEFAULT_BASELINE_FEATURES)
+
+
+def prepare_feature_frame(df: pd.DataFrame, feature_columns: list[str] | None = None) -> pd.DataFrame:
+    if feature_columns is None:
+        feature_columns = DEFAULT_BASELINE_FEATURES
+
+    output = df[feature_columns].copy().astype(object)
+    numeric_columns, categorical_columns = infer_feature_groups(feature_columns)
     for column in numeric_columns:
         output[column] = pd.to_numeric(output[column], errors="coerce").astype("float64")
     for column in categorical_columns:
@@ -109,8 +138,12 @@ def prepare_feature_frame(df: pd.DataFrame) -> pd.DataFrame:
     return output
 
 
-def evaluate_binary_classification(model: Pipeline, df: pd.DataFrame) -> dict[str, float]:
-    probabilities = model.predict_proba(prepare_feature_frame(df))[:, 1]
+def evaluate_binary_classification(
+    model: Pipeline,
+    df: pd.DataFrame,
+    feature_columns: list[str] | None = None,
+) -> dict[str, float]:
+    probabilities = model.predict_proba(prepare_feature_frame(df, feature_columns))[:, 1]
     predictions = (probabilities >= 0.5).astype(int)
     y_true = df["target_value"].astype(int)
     return {
@@ -122,16 +155,40 @@ def evaluate_binary_classification(model: Pipeline, df: pd.DataFrame) -> dict[st
     }
 
 
-def build_result_row(task_name: str, target_column: str, train_df: pd.DataFrame, validation_df: pd.DataFrame, test_df: pd.DataFrame, validation_metrics: dict[str, float], test_metrics: dict[str, float]) -> pd.DataFrame:
+def build_result_row(
+    task_name: str,
+    target_column: str,
+    train_df: pd.DataFrame,
+    validation_df: pd.DataFrame,
+    test_df: pd.DataFrame,
+    validation_metrics: dict[str, float],
+    test_metrics: dict[str, float],
+    *,
+    experiment_id: str | None = None,
+    level_name: str = "level1",
+    feature_set: str = "baseline_default",
+    split_strategy: str = "group_by_pwsid",
+    model_name: str = "logistic_regression",
+    feature_columns: list[str] | None = None,
+    required_complete_case_columns: list[str] | None = None,
+    notes: str = "baseline_default with class_weight=balanced",
+) -> pd.DataFrame:
+    if feature_columns is None:
+        feature_columns = DEFAULT_BASELINE_FEATURES
+    if required_complete_case_columns is None:
+        required_complete_case_columns = []
+    if experiment_id is None:
+        experiment_id = f"{task_name}-{level_name}-{feature_set}-{model_name}-{split_strategy}-v001"
+
     return pd.DataFrame(
         [
             {
-                "experiment_id": f"{task_name}-level1-baseline_default-logistic_regression-group_by_pwsid-v001",
+                "experiment_id": experiment_id,
                 "task_name": task_name,
-                "level_name": "level1",
-                "feature_set": "baseline_default",
-                "split_strategy": "group_by_pwsid",
-                "model_name": "logistic_regression",
+                "level_name": level_name,
+                "feature_set": feature_set,
+                "split_strategy": split_strategy,
+                "model_name": model_name,
                 "target_column": target_column,
                 "train_rows": int(len(train_df)),
                 "validation_rows": int(len(validation_df)),
@@ -149,8 +206,10 @@ def build_result_row(task_name: str, target_column: str, train_df: pd.DataFrame,
                 "test_f1": test_metrics["f1"],
                 "test_recall": test_metrics["recall"],
                 "test_precision": test_metrics["precision"],
+                "feature_columns": ",".join(feature_columns),
+                "required_complete_case_columns": ",".join(required_complete_case_columns),
                 "run_time": now_text(),
-                "notes": "baseline_default with class_weight=balanced",
+                "notes": notes,
             }
         ]
     )
@@ -163,3 +222,69 @@ def split_three_way(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, pd.Da
     if train_df.empty or validation_df.empty or test_df.empty:
         raise ValueError("Train/validation/test split is incomplete.")
     return train_df, validation_df, test_df
+
+
+def build_binary_dataset(df: pd.DataFrame, task_name: str, level_name: str) -> tuple[pd.DataFrame, str]:
+    level_column = f"{level_name}_flag"
+    if level_column not in df.columns:
+        raise ValueError(f"Unsupported level_name: {level_name}")
+
+    if task_name == "tthm_regulatory_exceedance_prediction":
+        subset = df.loc[(df[level_column] == 1) & df["tthm_regulatory_exceed_label"].notna()].copy()
+        subset["target_value"] = subset["tthm_regulatory_exceed_label"].astype(int)
+        return subset, "tthm_regulatory_exceed_label"
+
+    if task_name == "tthm_anchored_risk_prediction":
+        anchored = build_tthm_anchored_risk_label(df["tthm_sample_weighted_mean_ug_l"])
+        subset = df.loc[(df[level_column] == 1) & anchored.notna()].copy()
+        subset["target_value"] = anchored.loc[subset.index].astype(int)
+        return subset, "tthm_anchored_risk_label"
+
+    raise ValueError(f"Unsupported task_name: {task_name}")
+
+
+def filter_complete_case(df: pd.DataFrame, required_columns: list[str]) -> pd.DataFrame:
+    if not required_columns:
+        return df.copy()
+    return df.loc[df[required_columns].notna().all(axis=1)].copy()
+
+
+def run_binary_experiment(
+    base_df: pd.DataFrame,
+    *,
+    task_name: str,
+    level_name: str,
+    feature_columns: list[str],
+    feature_set: str,
+    notes: str,
+    required_complete_case_columns: list[str] | None = None,
+    experiment_id: str | None = None,
+) -> pd.DataFrame:
+    if required_complete_case_columns is None:
+        required_complete_case_columns = []
+
+    dataset, target_column = build_binary_dataset(base_df, task_name=task_name, level_name=level_name)
+    dataset = filter_complete_case(dataset, required_complete_case_columns)
+    train_df, validation_df, test_df = split_three_way(dataset)
+
+    model = build_logistic_regression_pipeline(feature_columns)
+    model.fit(prepare_feature_frame(train_df, feature_columns), train_df["target_value"].astype(int))
+
+    validation_metrics = evaluate_binary_classification(model, validation_df, feature_columns)
+    test_metrics = evaluate_binary_classification(model, test_df, feature_columns)
+
+    return build_result_row(
+        task_name=task_name,
+        target_column=target_column,
+        train_df=train_df,
+        validation_df=validation_df,
+        test_df=test_df,
+        validation_metrics=validation_metrics,
+        test_metrics=test_metrics,
+        experiment_id=experiment_id,
+        level_name=level_name,
+        feature_set=feature_set,
+        feature_columns=feature_columns,
+        required_complete_case_columns=required_complete_case_columns,
+        notes=notes,
+    )

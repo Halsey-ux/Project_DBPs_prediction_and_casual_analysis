@@ -28,6 +28,7 @@
 - 基于 `V4_pws_year_ml_ready.csv` 进入正式 train / validation / test 切分与 baseline 训练
 - 固定第一版 baseline、conditional 与 enhanced 特征制度
 - 为后续正式训练脚本划清任务边界、特征边界、缺失处理边界与禁止误用规则
+- 基于已冻结的 `V4` 路线图，正式准备进入 `V4.2` 的 `level2 mechanistic core stage1` 增强实验
 
 ## 4. 目录结构
 
@@ -76,7 +77,12 @@ D:\Project_DBPs_prediction_and_casual_analysis
   - `03_v2/`：V2 第一章第一部分数据基础审计 prompt
   - `04_v3/`：V3 原型主表、字段映射与字段筛选规范
   - `05_v3_5/`：V3.5 `ml_ready` 构建说明、字典与执行 prompt
-  - `06_v4/`：V4 任务定义与训练协议
+  - `06_v4/`：V4 文档总目录
+    - `01_protocol/`：V4 任务定义与训练协议
+    - `02_v4_1_baseline/`：V4.1 baseline 执行与摘要
+    - `03_v4_1_learning_support/`：V4.1 面向理解的解释型文档
+    - `04_v4_plan/`：V4 后续实验路线图与计划书
+    - `05_v4_2_prompt/`：V4.2 下一轮实验的 Codex 执行 prompt
 - `scripts/`
   - 数据转换脚本
   - 合并脚本
@@ -259,62 +265,32 @@ GitHub 不直接管理：
 
 ## 9. 最近一次更新
 
-最后更新时间：2026-03-31 16:35（Asia/Hong_Kong）
+最后更新时间：2026-04-03 11:04（Asia/Hong_Kong）
 
 最近更新内容：
 
-- 新增脚本 `scripts/build_v3_5_pws_year_ml_ready.py`，用于从第三层 `V3_pws_year_master.csv` 派生 V3.5 机器学习输入层
-- 新增本地输出 `data_local/V4_Chapter1_Part1_ML_Ready/V4_pws_year_ml_ready.csv`
-- 新增文档 `docs/05_v3_5/V3_5_PWS_Year_ML_Ready_Build_Notes.md` 与 `docs/05_v3_5/V3_5_PWS_Year_ML_Ready_Dictionary.md`
-- 正式固定第三层 `TTHM` 主结果变量为 `tthm_sample_weighted_mean_ug_l`
-- 正式固定 `tthm_regulatory_exceed_label` 与 `tthm_warning_label`，并明确 `80 ug/L` 为法规阈值、`60 ug/L` 仅为预警阈值
-- 正式固定 `level1 / level2 / level3` 样本分层、`ml_level_max` 最高层级标记与 5 个机制变量缺失标记列
-- 完成基础清洗边界冻结：校验主键唯一、统一字段类型、保留原始缺失、禁止覆盖式插补、禁止目标缺失样本误写标签
-- 确认 `V4_pws_year_ml_ready.csv` 行数为 `259,500`、字段数为 `38`，可被 pandas 稳定回读
-- 同步更新 `codex.md`，将 V3.5 过渡更新正式记入项目级说明书
-- 补强 `scripts/build_v3_5_pws_year_ml_ready.py` 的 CSV 回读校验：不再只检查行列一致，而是按显式 schema 回读并校验关键字段 dtype，防止标签列、treatment 二值列和整数计数列在后续 V4 阶段发生类型漂移
-- 新增统一读取模块 `scripts/io_v4_ml_ready.py`，正式固定 V4 `ml_ready` 表的 schema、统一读取函数与类型校验入口，后续 V4 脚本不再直接裸用 `pd.read_csv`
-- 已验证统一读取函数可将 `tthm_regulatory_exceed_label`、`tthm_warning_label`、`has_disinfection_process` 恢复为 `Int8`，并将 `tthm_months_with_data` 恢复为 `Int64`
-- 已新增文档 `docs/06_v4/V4_TTHM_Model_Task_Definition.md`，正式固定 V4 阶段 `TTHM` 主线的三条任务线、三档样本层级、baseline/enhanced/conditional 特征制度、评价指标与禁止误用规则
-- 已新增脚本 `scripts/prepare_v4_tthm_model_inputs.py`，用于基于统一读取入口生成 V4 建模准备摘要、任务概览表和特征缺失概览表
-- 已新增本地目录 `data_local/V4_Chapter1_Part1_Model_Prep/`，用于存放 V4 建模准备阶段的轻量摘要产物
-- 已新增总协议文档 `docs/06_v4/V4_Training_Protocol.md`，正式固定 V4 阶段的任务体系、阶段 A/阶段 B 区分、`group_by_pwsid` 切分主方案、特征制度、缺失处理边界、评价指标、结果表模板与版本维护规则
-- 已按阶段顺序将 `docs/` 下 Markdown 文档重新整理到 `00_overview` 至 `06_v4` 子目录，并将非英文文件名统一改为英文文件名，正文保持中文
-- 已清理项目说明和文档内部对旧中文文件名、旧根目录路径的引用，统一切换到新的英文路径
-- 已重写 `docs/06_v4/V4_Training_Protocol.md` 与 `docs/06_v4/V4_TTHM_Model_Task_Definition.md`，清除编码问题并改为当前正式 V4 任务口径
-- 已删除原先的“阶段 A 高风险子集探索”入口，当前 V4 直接采用正式预测任务体系
-- 已正式固定两个主分类任务名：`tthm_regulatory_exceedance_prediction` 与 `tthm_anchored_risk_prediction`
-- 已正式固定 `TTHM >= 80 ug/L` 为法规超标端，`TTHM <= 40 ug/L` 为研究型 low-risk anchor，明确 `40 ug/L` 不是联邦法定低风险阈值
-- 已正式固定第一版 baseline 默认输入 `X` 为 `system_type`、`source_water_type`、`retail_population_served`、`n_facilities_in_master`
-- 已将 `adjusted_total_population_served`、`months_*`、`n_core_vars_available` 降级为结构/覆盖条件候选特征
-- 已将 6 个 `has_*_process` 降级为 treatment 条件候选特征，不再作为第一版 baseline 默认输入
-- 已新增执行层脚本 `scripts/build_v4_tthm_splits.py`，正式生成 `group_by_pwsid` 主切分及两个任务的 split 索引
-- 已新增执行层脚本 `scripts/v4_tthm_training_common.py`，统一 baseline 训练所需的数据读取、特征处理和结果记录逻辑
-- 已新增执行层脚本 `scripts/train_v4_tthm_regulatory_baseline.py` 与 `scripts/train_v4_tthm_anchored_baseline.py`
-- 已实际生成本地切分目录 `data_local/V4_Chapter1_Part1_Splits/`
-- 已实际生成本地实验结果目录 `data_local/V4_Chapter1_Part1_Experiments/`
-- 已完成 `tthm_regulatory_exceedance_prediction` 第一版 baseline 训练，测试集 `PR-AUC=0.068959`、`ROC-AUC=0.704565`
-- 已完成 `tthm_anchored_risk_prediction` 第一版 baseline 训练，测试集 `PR-AUC=0.116178`、`ROC-AUC=0.745176`
-- 已补装当前 Python 环境缺失的 `scikit-learn` 依赖，并验证执行层脚本可完整运行
+- 新增文档 `docs/06_v4/07_v4_3_prompt/V4_3_TOC_Increment_Codex_Prompt.md`
+- 已将 `V4.3` 的正式方向固定为：在 `V4.2.1` 底座上进行 `TOC` 增量实验，而不是直接切入 `free_chlorine`、树模型或调参
+- 已把 `V4.3` 所需的对照链、缺失处理要求、争议点、禁止事项和输出要求写成新的 Codex 执行 prompt
+- 已明确 `V4.3` 必须保留 `level2 baseline reference`、`mechanistic stage1 reference`、complete-case reference，以及必要的 no-missing-flags 敏感性检查
+- 已明确当前体系仍属于“预测增强实验框架”，`V4.3` 必须继续控制解释边界，不能把 `level2` 增益直接写成全国主结论或因果发现
 
 对应提交：
 
-- 最近已推送提交：`9337e712dbc8440969f2fb0bbd1024718fea62b6`（`fix: add schema-based IO and validation for V4 ml_ready csv`）
-- 本次 `docs` 目录规整、V4 协议重构与执行层脚本新增尚未提交，待本轮统一执行 Git 提交与推送
+- 最近已推送提交：`f04df63`（`feat: add V4 execution pipeline and reorganize docs`）
+- 本次新增 `V4.3` 执行 prompt 与相关文档更新尚未提交，待用户确认是否执行 Git 提交与推送
 
 ## 10. 下一步任务
 
 下一步最具体的工作是：
 
-- 基于当前已生成的 split 和 baseline 结果，开始结构/覆盖条件特征对照实验
-- 再测试 treatment 条件特征是否带来稳定增益
-- 在 `level2` 上启动 `enhanced_default` 机制变量实验
-- 补充统一结果汇总表，把 regulatory 和 anchored 两条主线结果并入同一实验记录表
-- 按 `level1 / level2 / level3` 三档样本继续执行正式编码、缺失处理和增强实验
+- 根据 `docs/06_v4/07_v4_3_prompt/V4_3_TOC_Increment_Codex_Prompt.md` 启动 `V4.3`
+- 在 `V4.2.1` 的 `level2 mechanistic stage1` 底座上加入 `TOC + toc_missing_flag`
+- 保留 `level2 baseline reference`、`mechanistic stage1 reference`、complete-case reference 和必要的 no-missing-flags 敏感性检查
+- 在确认 `TOC` 的边际增益后，再决定是否进入 `free_chlorine`
+- 继续维护统一结果汇总表，把后续 regulatory 与 anchored 的新增实验并入同一比较框架
 - 保持第二层 `facility-month` 机制线并行，但不与第三层全国主模型线混表
-- 基于 `scripts/prepare_v4_tthm_model_inputs.py` 先生成一轮 V4 建模准备摘要，再开始正式训练/验证/测试切分
-- 优先完成 `level1 + baseline` 主线，再把 `level2 + enhanced` 作为机制增益实验，而不是反过来直接把增强模型当主结论
-- 基于总协议继续实现结构/覆盖条件实验、treatment 条件实验和 `level2 + enhanced` 训练脚本
+- 暂不进入树模型与超参数优化，先把机制变量的增量顺序与口径稳定性固定清楚
 
 ---
 
