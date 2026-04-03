@@ -89,6 +89,7 @@ D:\Project_DBPs_prediction_and_casual_analysis
     - `06_v4_2_execution/`：V4.2 执行报告
     - `07_v4_3_prompt/`：V4.3 TOC 增量实验的 Codex 执行 prompt
     - `08_v4_3_execution/`：V4.3 执行报告
+    - `09_v4_4_prompt/`：V4.4 free_chlorine 增量实验的 Codex 执行 prompt
 - `scripts/`
   - 数据转换脚本
   - 合并脚本
@@ -277,38 +278,58 @@ GitHub 不直接管理：
 - 已确认 `TOC` 在 `regulatory` 任务上带来部分稳定增益：validation 与 complete-case 结果改善明显，test `ROC-AUC` 与 `balanced_accuracy` 提升，但 full `level2` test `PR-AUC` 未继续上升
 - 已确认 `pH + alkalinity + TOC` complete-case 子集上删除 missing flags 后结果与保留 flags 完全一致，说明相关 flags 在该子集内只是常量列
 - 已完成 `baseline_without_n_facilities` 轻量敏感性检查，并确认 `n_facilities_in_master` 对 baseline 有一定贡献但不是压倒性驱动项
+- 已新增文档 `docs/06_v4/09_v4_4_prompt/V4_4_Free_Chlorine_Increment_Codex_Prompt.md`
+- 已将 `V4.4` 的正式方向固定为：在 `V4.3 TOC increment` 底座上检验 `free_chlorine + free_chlorine_missing_flag` 的边际增益
+- 已明确 `V4.4` 必须保留 `level2 baseline reference`、`mechanistic stage1 reference`、`TOC increment reference`、complete-case reference 和 no-missing-flags 敏感性检查
+- 已明确 `V4.4` complete-case 的筛选口径必须扩展为 `pH + alkalinity + TOC + free_chlorine` 同时非缺失
+- 已明确 `V4.4` 暂不进入 `total_chlorine`、树模型和超参数优化，继续沿用逐步增强实验路线
+- 已新增脚本 `scripts/train_v4_tthm_regulatory_l2_free_chlorine_increment.py`
+- 已新增脚本 `scripts/train_v4_tthm_anchored_l2_free_chlorine_increment.py`
+- 已扩展 `scripts/v4_tthm_training_common.py`，使其在 complete-case 子集出现单一类别 split 时输出可执行性说明而不是直接报错中断
+- 已完成 `V4.4 level2 free_chlorine increment` 的两条正式任务执行，结果统一写入 `data_local/V4_Chapter1_Part1_Experiments/V4_4/`
+- 已新增中文执行报告 `docs/06_v4/10_v4_4_execution/V4_4_Level2_Free_Chlorine_Increment_Execution_Report.md`
+- 已确认 `free_chlorine` 在 full `level2` 上对 `regulatory` 与 `anchored` 两条任务都带来方向一致但幅度很小的边际增益
+- 已确认 `free_chlorine` 在 `level2` 中覆盖率极低：`regulatory` 任务可用观测仅 `749 / 26,975`，`anchored` 任务可用观测仅 `540 / 17,501`
+- 已确认 `pH + alkalinity + TOC + free_chlorine` complete-case 子集在 `group_by_pwsid` 切分后，`regulatory` 与 `anchored` 的 train split 都只剩负类，因此无法合法训练 `LogisticRegression`
+- 已明确 `V4.4` 当前不能像 `V4.2` 与 `V4.3` 那样通过 complete-case 结果稳健地区分 `free_chlorine` 数值信号与缺失模式信号
+- 已明确当前不建议直接进入 `V4.5 total_chlorine increment`，应先审计 `total_chlorine` 在 `level2` 与 `facility-month` 口径下的覆盖率和可执行性
+- 已新增脚本 `scripts/audit_v4_total_chlorine_readiness.py`
+- 已完成 `V4.4b total_chlorine readiness audit`，结果统一写入 `data_local/V4_Chapter1_Part1_Experiments/V4_4b/total_chlorine_readiness_audit/`
+- 已新增中文执行报告 `docs/06_v4/11_v4_4b_execution/V4_4b_Total_Chlorine_Readiness_Audit_Report.md`
+- 已确认 `total_chlorine` 在 `PWS-year` 中的覆盖率低于 `free_chlorine`：`level2` 仅 `185 / 26,975`，`level3` 仅 `152 / 6,193`
+- 已确认 `pH + alkalinity + TOC + total_chlorine` complete-case 在 `regulatory` 与 `anchored` 的 `level2 / level3` 四个任务层级中全部只剩负类，因此没有任何一个版本具备合法训练 `LogisticRegression` 的条件
+- 已确认 `facility-month` 下 `TTHM + total_chlorine` 重合行数为 `2,385`，高于第三层，但 `TTHM + pH + alkalinity + TOC + total_chlorine` 全齐行数仍为 `0`
+- 已明确 `V4.4b` 的正式结论是：暂停 `V4.5 total_chlorine increment`，把 `total_chlorine` 从第三层主线待增量变量调整为第二层机制专题候选变量
+- 已新增总结文档 `docs/V1_4_Update_Summary.md`
+- 已对 `V1` 至 `V4.4b` 的数据处理、主表构建、建模主线、关键结论、方法边界与风险点进行了系统中文总结
+- 已明确当前阶段最稳妥的总判断是：`TOC` 是第三层主线上最可信的机制增强变量，`free_chlorine` 只有弱边际增益，`total_chlorine` 当前不适合继续进入第三层正式增量实验
 
 ## 9. 最近一次更新
 
-最后更新时间：2026-04-03 12:07（Asia/Hong_Kong）
+最后更新时间：2026-04-03 14:22（Asia/Hong_Kong）
 
 最近更新内容：
 
-- 新增脚本 `scripts/train_v4_tthm_regulatory_l2_toc_increment.py`
-- 新增脚本 `scripts/train_v4_tthm_anchored_l2_toc_increment.py`
-- 更新 `scripts/v4_tthm_training_common.py`，补充版本化结果目录能力与扩展分类指标输出
-- 新增文档 `docs/06_v4/08_v4_3_execution/V4_3_Level2_TOC_Increment_Execution_Report.md`
-- 已完成 `V4.3 level2 TOC increment` 的两条正式任务，并将结果写入 `data_local/V4_Chapter1_Part1_Experiments/V4_3/...`
-- 已确认 `TOC` 在 `anchored` 任务上提供稳定且显著的边际增益
-- 已确认 `TOC` 在 `regulatory` 任务上提供部分稳定增益，但不能写成所有主指标都继续上升
-- 已确认 `pH + alkalinity + TOC` complete-case 子集上删除 missing flags 不改变结果
-- 已完成 `baseline_without_n_facilities` 敏感性检查，支持继续把 `n_facilities_in_master` 视为结构代理特征而非纯机制变量
+- 新增总结文档 `docs/V1_4_Update_Summary.md`
+- 已把 `V1` 至 `V4.4b` 的关键结论、流程合理性、方法边界、环境意义冲突点与后续方向系统整理成中文总结
+- 已明确当前阶段最重要的成果不是单一“最优模型”，而是探明了第三层 `PWS-year` 主线的变量增量边界与适用边界
+- 已明确当前最稳妥的总体结论是：`TOC` 值得保留为第三层核心机制增强变量，`free_chlorine` 只有弱增益，`total_chlorine` 不宜继续推进第三层正式主线
 
 对应提交：
 
-- 最近已推送提交：`f04df63`（`feat: add V4 execution pipeline and reorganize docs`）
-- 本次 `V4.3` 脚本、结果与执行文档更新尚未提交，待用户确认是否执行 Git 提交与推送
+- 最近已推送提交：`8c36b79`（`feat: add V4.3 TOC increment experiments and execution report`）
+- 本次 `V4.4`、`V4.4b` 与阶段总结文档的更新尚未提交，待用户确认是否执行 Git 提交与推送
 
 ## 10. 下一步任务
 
 下一步最具体的工作是：
 
-- 以 `V4.3` 为已完成底座，评估是否进入 `free_chlorine + free_chlorine_missing_flag` 的下一轮增量实验
-- 若进入 `V4.4`，继续保留 `level2 baseline reference`、`mechanistic stage1 reference`、`TOC increment reference`、complete-case reference 和 no-missing-flags 敏感性检查
-- 在下一轮中继续分别跟踪 `regulatory` 与 `anchored`，避免把 `anchored` 的强增益误写成全部任务的一致结论
+- 固定 `V4.4` 与 `V4.4b` 的正式结论口径：`free_chlorine` 在第三层主线上仅表现为弱边际增益，`total_chlorine` 当前则不具备进入第三层正式增量实验的条件
+- 如需继续推进氯残留变量，优先转向第二层 `facility-month` 机制专题 reduced dataset 方案，而不是直接启动第三层 `V4.5 total_chlorine increment`
+- 在下一轮中继续分别跟踪 `regulatory` 与 `anchored`，避免把单一任务上的小幅增益误写成全部任务的一致结论
 - 继续维护统一结果汇总表，把后续新增实验并入同一比较框架
 - 保持第二层 `facility-month` 机制线并行，但不与第三层全国主模型线混表
-- 暂不进入树模型与超参数优化，先把机制变量的增量顺序与口径稳定性固定清楚
+- 暂不进入树模型与超参数优化，先把机制变量的增量顺序、覆盖率边界与口径稳定性固定清楚
 
 ---
 

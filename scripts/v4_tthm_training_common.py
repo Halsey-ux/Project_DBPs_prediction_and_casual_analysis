@@ -159,9 +159,14 @@ def evaluate_binary_classification(
     y_true = df["target_value"].astype(int)
     tn, fp, fn, tp = confusion_matrix(y_true, predictions, labels=[0, 1]).ravel()
     specificity = float(tn / (tn + fp)) if (tn + fp) > 0 else 0.0
+    pr_auc = np.nan
+    roc_auc = np.nan
+    if y_true.nunique() >= 2:
+        pr_auc = float(average_precision_score(y_true, probabilities))
+        roc_auc = float(roc_auc_score(y_true, probabilities))
     return {
-        "pr_auc": float(average_precision_score(y_true, probabilities)),
-        "roc_auc": float(roc_auc_score(y_true, probabilities)),
+        "pr_auc": pr_auc,
+        "roc_auc": roc_auc,
         "balanced_accuracy": float(balanced_accuracy_score(y_true, predictions)),
         "specificity": specificity,
         "mcc": float(matthews_corrcoef(y_true, predictions)),
@@ -173,6 +178,28 @@ def evaluate_binary_classification(
         "fp": int(fp),
         "fn": int(fn),
     }
+
+
+def build_unavailable_metrics() -> dict[str, float]:
+    return {
+        "pr_auc": np.nan,
+        "roc_auc": np.nan,
+        "balanced_accuracy": np.nan,
+        "specificity": np.nan,
+        "mcc": np.nan,
+        "f1": np.nan,
+        "recall": np.nan,
+        "precision": np.nan,
+        "tp": np.nan,
+        "tn": np.nan,
+        "fp": np.nan,
+        "fn": np.nan,
+    }
+
+
+def summarize_target_class_counts(df: pd.DataFrame) -> dict[int, int]:
+    counts = df["target_value"].astype(int).value_counts().sort_index()
+    return {int(label): int(count) for label, count in counts.items()}
 
 
 def build_result_row(
@@ -301,11 +328,52 @@ def run_binary_experiment(
     dataset = filter_complete_case(dataset, required_complete_case_columns)
     train_df, validation_df, test_df = split_three_way(dataset)
 
+    train_class_counts = summarize_target_class_counts(train_df)
+    validation_class_counts = summarize_target_class_counts(validation_df)
+    test_class_counts = summarize_target_class_counts(test_df)
+    single_class_splits = [
+        split_name
+        for split_name, split_df in (
+            ("train", train_df),
+            ("validation", validation_df),
+            ("test", test_df),
+        )
+        if split_df["target_value"].astype(int).nunique() < 2
+    ]
+
+    if "train" in single_class_splits:
+        unavailable_metrics = build_unavailable_metrics()
+        infeasible_notes = (
+            f"{notes} | not_run_due_to_single_class_train_split "
+            f"(train={train_class_counts}; validation={validation_class_counts}; test={test_class_counts})"
+        )
+        return build_result_row(
+            task_name=task_name,
+            target_column=target_column,
+            train_df=train_df,
+            validation_df=validation_df,
+            test_df=test_df,
+            validation_metrics=unavailable_metrics,
+            test_metrics=unavailable_metrics,
+            experiment_id=experiment_id,
+            level_name=level_name,
+            feature_set=feature_set,
+            feature_columns=feature_columns,
+            required_complete_case_columns=required_complete_case_columns,
+            notes=infeasible_notes,
+        )
+
     model = build_logistic_regression_pipeline(feature_columns)
     model.fit(prepare_feature_frame(train_df, feature_columns), train_df["target_value"].astype(int))
 
     validation_metrics = evaluate_binary_classification(model, validation_df, feature_columns)
     test_metrics = evaluate_binary_classification(model, test_df, feature_columns)
+    output_notes = notes
+    if single_class_splits:
+        output_notes = (
+            f"{notes} | single_class_eval_split_detected "
+            f"(train={train_class_counts}; validation={validation_class_counts}; test={test_class_counts})"
+        )
 
     return build_result_row(
         task_name=task_name,
@@ -320,5 +388,5 @@ def run_binary_experiment(
         feature_set=feature_set,
         feature_columns=feature_columns,
         required_complete_case_columns=required_complete_case_columns,
-        notes=notes,
+        notes=output_notes,
     )
