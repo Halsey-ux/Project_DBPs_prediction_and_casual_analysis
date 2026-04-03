@@ -22,13 +22,13 @@
 
 ## 3. 当前阶段目标
 
-当前阶段目标是完成 V4 正式机器学习阶段的机制增强顺序验证，并为下一轮 `free_chlorine` 增量实验做准备：
+当前阶段目标是完成 V4 第三层全国主线的结构/覆盖条件增强验证，并据此决定第三层主线是先阶段性收束，还是再进入 treatment summary features 补充实验：
 
-- 固定第三层 `TTHM` 主线的正式任务体系、正式 `X / Y` 定义与 `level1/level2/level3` 分层
-- 基于 `V4_pws_year_ml_ready.csv` 完成 baseline、`V4.2` 与 `V4.3` 的连续对照实验
-- 固定第一版 baseline 与机制增强链条的特征制度、缺失处理制度与解释边界
-- 判断 `TOC` 在 `level2 mechanistic stage1` 底座上是否带来可解释的边际增益
-- 在保持对照链完整的前提下，决定是否进入下一轮 `free_chlorine` 增量实验
+- 固定第三层 `TTHM` 主线在 `level1` 上的全国 baseline 与结构/覆盖条件增强对照链
+- 基于 `V4_pws_year_ml_ready.csv` 完成 `V4.5` 的 `level1` 主实验与 `level2` 补充对照
+- 判断结构/覆盖条件特征是否值得纳入第三层全国主线正式预测模型
+- 区分“全国主线风险画像增强”与“环境机制增强”的解释边界
+- 在完成 `V4.5` 后，决定是优先收束第三层主线结论，还是继续进入 treatment summary features 增量实验
 
 ## 4. 目录结构
 
@@ -303,33 +303,54 @@ GitHub 不直接管理：
 - 已新增总结文档 `docs/V1_4_Update_Summary.md`
 - 已对 `V1` 至 `V4.4b` 的数据处理、主表构建、建模主线、关键结论、方法边界与风险点进行了系统中文总结
 - 已明确当前阶段最稳妥的总判断是：`TOC` 是第三层主线上最可信的机制增强变量，`free_chlorine` 只有弱边际增益，`total_chlorine` 当前不适合继续进入第三层正式增量实验
+- 已新增文档 `docs/06_v4/12_v4_5_prompt/V4_5_PWS_Year_Structural_Conditional_Increment_Codex_Prompt.md`
+- 已将 `V4.5` 的正式方向固定为：在第三层 `PWS-year` 全国主线 baseline 基础上测试结构/覆盖条件特征的增量价值
+- 已明确 `V4.5` 应优先回到 `level1` 主线，而不是继续默认以 `level2` 替代全国主样本
+- 已明确 `V4.5` 的结论必须区分“预测增强”与“环境机制解释”，不得把结构/覆盖特征的增益误写成机制发现
+- 已新增脚本 `scripts/v4_5_structural_conditional_common.py`
+- 已新增脚本 `scripts/train_v4_tthm_regulatory_l1_structural_conditional_increment.py`
+- 已新增脚本 `scripts/train_v4_tthm_anchored_l1_structural_conditional_increment.py`
+- 已新增脚本 `scripts/train_v4_tthm_regulatory_l2_structural_conditional_reference.py`
+- 已新增脚本 `scripts/train_v4_tthm_anchored_l2_structural_conditional_reference.py`
+- 已完成 `V4.5 PWS-year structural conditional increment` 的两条正式主任务与 `level2` 补充对照，结果统一写入 `data_local/V4_Chapter1_Part1_Experiments/V4_5/`
+- 已新增中文执行报告 `docs/06_v4/13_v4_5_execution/V4_5_PWS_Year_Structural_Conditional_Increment_Execution_Report.md`
+- 已确认结构/覆盖条件特征在 `level1` 全国主线上对 `regulatory` 与 `anchored` 两条任务都带来明显且稳定的预测提升
+- 已确认 `anchored` 是本轮提升更强的任务：`level1` 上 validation `PR-AUC` 从 `0.1216` 升至 `0.2183`，test `PR-AUC` 从 `0.1162` 升至 `0.1990`
+- 已确认 `regulatory` 也出现稳定增益：`level1` 上 validation `PR-AUC` 从 `0.0696` 升至 `0.1003`，test `PR-AUC` 从 `0.0690` 升至 `0.1025`
+- 已确认去掉 `annual_match_quality_tier` 后结果仍明显高于 baseline，说明主体增益来自结构/覆盖计数特征本身，而不是单个年度质量标签
+- 已确认 `annual_match_quality_tier` 在 `level1` 与 `level2` 上都提供小幅但一致的附加增益，但它只能被解释为年度匹配质量标签，不能被解释为环境机制变量
+- 已确认 `n_facilities_in_master` 仍有轻微贡献，但不是压倒性驱动项；`level1 baseline` 去掉该变量后，`regulatory` 与 `anchored` 的 test `PR-AUC` 仅分别下降约 `0.0020` 与 `0.0028`
+- 已确认 `level1` 与 `level2` 对同一组结构/覆盖条件特征的响应方向一致，但 `level2` 的绝对 test `PR-AUC` 增益更大
+- 已明确 `V4.5` 的最稳妥结论是：结构/覆盖条件特征值得纳入第三层全国主线正式预测模型，但其学术定位应是“风险画像增强”或“观测制度代理增强”，而不是“机制增强”
 
 ## 9. 最近一次更新
 
-最后更新时间：2026-04-03 14:22（Asia/Hong_Kong）
+最后更新时间：2026-04-03 16:30（Asia/Hong_Kong）
 
 最近更新内容：
 
-- 新增总结文档 `docs/V1_4_Update_Summary.md`
-- 已把 `V1` 至 `V4.4b` 的关键结论、流程合理性、方法边界、环境意义冲突点与后续方向系统整理成中文总结
-- 已明确当前阶段最重要的成果不是单一“最优模型”，而是探明了第三层 `PWS-year` 主线的变量增量边界与适用边界
-- 已明确当前最稳妥的总体结论是：`TOC` 值得保留为第三层核心机制增强变量，`free_chlorine` 只有弱增益，`total_chlorine` 不宜继续推进第三层正式主线
+- 已新增 `V4.5` 共享配置脚本 `scripts/v4_5_structural_conditional_common.py` 与 4 个训练脚本，用于执行 `level1` 主实验和 `level2` 补充对照
+- 已完成 `V4.5 PWS-year structural conditional increment`，结果写入 `data_local/V4_Chapter1_Part1_Experiments/V4_5/`
+- 已新增中文执行报告 `docs/06_v4/13_v4_5_execution/V4_5_PWS_Year_Structural_Conditional_Increment_Execution_Report.md`
+- 已确认结构/覆盖条件特征在 `level1` 全国主线上显著提升 `regulatory` 与 `anchored` 两条任务的预测表现
+- 已确认 `annual_match_quality_tier` 只提供小幅附加收益，主体增益来自更基础的结构/覆盖计数特征
+- 已明确 `V4.5` 结果应被写成第三层全国主线的风险画像增强，而不是环境机制增强
 
 对应提交：
 
-- 最近已推送提交：`8c36b79`（`feat: add V4.3 TOC increment experiments and execution report`）
-- 本次 `V4.4`、`V4.4b` 与阶段总结文档的更新尚未提交，待用户确认是否执行 Git 提交与推送
+- 最近已推送提交：`5e90be6`（`docs: add V4.1-4 update summary with V4.4 and V4.4b findings`）
+- 本次 `V4.5` 脚本、结果文档与 `codex.md` 更新尚未提交，待用户确认是否执行 Git 提交与推送
 
 ## 10. 下一步任务
 
 下一步最具体的工作是：
 
-- 固定 `V4.4` 与 `V4.4b` 的正式结论口径：`free_chlorine` 在第三层主线上仅表现为弱边际增益，`total_chlorine` 当前则不具备进入第三层正式增量实验的条件
-- 如需继续推进氯残留变量，优先转向第二层 `facility-month` 机制专题 reduced dataset 方案，而不是直接启动第三层 `V4.5 total_chlorine increment`
-- 在下一轮中继续分别跟踪 `regulatory` 与 `anchored`，避免把单一任务上的小幅增益误写成全部任务的一致结论
-- 继续维护统一结果汇总表，把后续新增实验并入同一比较框架
+- 基于 `V4.5` 结果，收束第三层 `PWS-year` 全国主线的阶段性结论，明确 baseline、机制增强线与结构/覆盖条件增强线的各自定位
+- 把 `V4.5` 的结果并入统一比较框架，形成后续论文主线可直接引用的对照摘要
+- 如仍需继续扩展第三层主线，优先把 treatment summary features 设计为补充型增量实验，而不是默认主线延长
+- 如启动 treatment summary features 增量实验，必须继续保留 `level1 baseline reference` 与 `V4.5` 的结构/覆盖条件对照链
 - 保持第二层 `facility-month` 机制线并行，但不与第三层全国主模型线混表
-- 暂不进入树模型与超参数优化，先把机制变量的增量顺序、覆盖率边界与口径稳定性固定清楚
+- 暂不进入树模型与超参数优化，先把第三层主线的解释边界和特征制度固定清楚
 
 ---
 
