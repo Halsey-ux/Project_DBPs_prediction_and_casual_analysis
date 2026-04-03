@@ -10,7 +10,16 @@ import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import average_precision_score, f1_score, precision_score, recall_score, roc_auc_score
+from sklearn.metrics import (
+    average_precision_score,
+    balanced_accuracy_score,
+    confusion_matrix,
+    f1_score,
+    matthews_corrcoef,
+    precision_score,
+    recall_score,
+    roc_auc_score,
+)
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
@@ -38,8 +47,10 @@ def now_text() -> str:
     return datetime.now(TZ).strftime("%Y-%m-%d %H:%M:%S")
 
 
-def ensure_results_dir(task_name: str) -> Path:
-    task_dir = RESULTS_DIR / task_name
+def ensure_results_dir(*path_parts: str) -> Path:
+    if not path_parts:
+        raise ValueError("At least one path part is required.")
+    task_dir = RESULTS_DIR.joinpath(*path_parts)
     task_dir.mkdir(parents=True, exist_ok=True)
     return task_dir
 
@@ -146,12 +157,21 @@ def evaluate_binary_classification(
     probabilities = model.predict_proba(prepare_feature_frame(df, feature_columns))[:, 1]
     predictions = (probabilities >= 0.5).astype(int)
     y_true = df["target_value"].astype(int)
+    tn, fp, fn, tp = confusion_matrix(y_true, predictions, labels=[0, 1]).ravel()
+    specificity = float(tn / (tn + fp)) if (tn + fp) > 0 else 0.0
     return {
         "pr_auc": float(average_precision_score(y_true, probabilities)),
         "roc_auc": float(roc_auc_score(y_true, probabilities)),
+        "balanced_accuracy": float(balanced_accuracy_score(y_true, predictions)),
+        "specificity": specificity,
+        "mcc": float(matthews_corrcoef(y_true, predictions)),
         "f1": float(f1_score(y_true, predictions, zero_division=0)),
         "recall": float(recall_score(y_true, predictions, zero_division=0)),
         "precision": float(precision_score(y_true, predictions, zero_division=0)),
+        "tp": int(tp),
+        "tn": int(tn),
+        "fp": int(fp),
+        "fn": int(fn),
     }
 
 
@@ -198,14 +218,28 @@ def build_result_row(
                 "positive_count_test": int(test_df["target_value"].sum()),
                 "validation_pr_auc": validation_metrics["pr_auc"],
                 "validation_roc_auc": validation_metrics["roc_auc"],
+                "validation_balanced_accuracy": validation_metrics["balanced_accuracy"],
+                "validation_specificity": validation_metrics["specificity"],
+                "validation_mcc": validation_metrics["mcc"],
                 "validation_f1": validation_metrics["f1"],
                 "validation_recall": validation_metrics["recall"],
                 "validation_precision": validation_metrics["precision"],
+                "validation_tp": validation_metrics["tp"],
+                "validation_tn": validation_metrics["tn"],
+                "validation_fp": validation_metrics["fp"],
+                "validation_fn": validation_metrics["fn"],
                 "test_pr_auc": test_metrics["pr_auc"],
                 "test_roc_auc": test_metrics["roc_auc"],
+                "test_balanced_accuracy": test_metrics["balanced_accuracy"],
+                "test_specificity": test_metrics["specificity"],
+                "test_mcc": test_metrics["mcc"],
                 "test_f1": test_metrics["f1"],
                 "test_recall": test_metrics["recall"],
                 "test_precision": test_metrics["precision"],
+                "test_tp": test_metrics["tp"],
+                "test_tn": test_metrics["tn"],
+                "test_fp": test_metrics["fp"],
+                "test_fn": test_metrics["fn"],
                 "feature_columns": ",".join(feature_columns),
                 "required_complete_case_columns": ",".join(required_complete_case_columns),
                 "run_time": now_text(),

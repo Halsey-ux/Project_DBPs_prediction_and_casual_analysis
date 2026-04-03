@@ -22,13 +22,13 @@
 
 ## 3. 当前阶段目标
 
-当前阶段目标是完成 V4 正式机器学习阶段的第一轮 baseline 执行与后续增强实验准备：
+当前阶段目标是完成 V4 正式机器学习阶段的机制增强顺序验证，并为下一轮 `free_chlorine` 增量实验做准备：
 
 - 固定第三层 `TTHM` 主线的正式任务体系、正式 `X / Y` 定义与 `level1/level2/level3` 分层
-- 基于 `V4_pws_year_ml_ready.csv` 进入正式 train / validation / test 切分与 baseline 训练
-- 固定第一版 baseline、conditional 与 enhanced 特征制度
-- 为后续正式训练脚本划清任务边界、特征边界、缺失处理边界与禁止误用规则
-- 基于已冻结的 `V4` 路线图，正式准备进入 `V4.2` 的 `level2 mechanistic core stage1` 增强实验
+- 基于 `V4_pws_year_ml_ready.csv` 完成 baseline、`V4.2` 与 `V4.3` 的连续对照实验
+- 固定第一版 baseline 与机制增强链条的特征制度、缺失处理制度与解释边界
+- 判断 `TOC` 在 `level2 mechanistic stage1` 底座上是否带来可解释的边际增益
+- 在保持对照链完整的前提下，决定是否进入下一轮 `free_chlorine` 增量实验
 
 ## 4. 目录结构
 
@@ -67,6 +67,9 @@ D:\Project_DBPs_prediction_and_casual_analysis
 - `data_local/V4_Chapter1_Part1_ML_Ready/`
   - V3.5 机器学习输入层目录
   - 用于存放 `V4_pws_year_ml_ready.csv`
+- `data_local/V4_Chapter1_Part1_Experiments/`
+  - V4 实验结果目录
+  - 当前已按版本分层写入 `V4_3/tthm_regulatory_exceedance_prediction/` 与 `V4_3/tthm_anchored_risk_prediction/`
 
 各目录作用：
 
@@ -82,7 +85,10 @@ D:\Project_DBPs_prediction_and_casual_analysis
     - `02_v4_1_baseline/`：V4.1 baseline 执行与摘要
     - `03_v4_1_learning_support/`：V4.1 面向理解的解释型文档
     - `04_v4_plan/`：V4 后续实验路线图与计划书
-    - `05_v4_2_prompt/`：V4.2 下一轮实验的 Codex 执行 prompt
+    - `05_v4_2_prompt/`：V4.2 机制核心 stage1 的 Codex 执行 prompt
+    - `06_v4_2_execution/`：V4.2 执行报告
+    - `07_v4_3_prompt/`：V4.3 TOC 增量实验的 Codex 执行 prompt
+    - `08_v4_3_execution/`：V4.3 执行报告
 - `scripts/`
   - 数据转换脚本
   - 合并脚本
@@ -262,33 +268,45 @@ GitHub 不直接管理：
 - 已确认 `level1` 样本数为 `199,802`、`level2` 样本数为 `26,975`、`level3` 样本数为 `6,193`
 - 已确认 `tthm_regulatory_exceed_label=1` 的系统-年份样本数为 `5,618`，`tthm_warning_label=1` 的系统-年份样本数为 `19,853`
 - 已明确 `annual_match_quality_tier` 保留在 `ml_ready` 表内，但默认不进入第一版主模型特征
+- 已新增脚本 `scripts/train_v4_tthm_regulatory_l2_toc_increment.py`
+- 已新增脚本 `scripts/train_v4_tthm_anchored_l2_toc_increment.py`
+- 已扩展 `scripts/v4_tthm_training_common.py`，使其支持版本化结果目录，并补充 `balanced_accuracy`、`specificity`、`MCC` 与 confusion matrix 指标输出
+- 已完成 `V4.3 level2 TOC increment` 的两条正式任务执行，结果统一写入 `data_local/V4_Chapter1_Part1_Experiments/V4_3/`
+- 已新增中文执行报告 `docs/06_v4/08_v4_3_execution/V4_3_Level2_TOC_Increment_Execution_Report.md`
+- 已确认 `TOC` 在 `anchored` 任务上带来明显且稳定的边际增益
+- 已确认 `TOC` 在 `regulatory` 任务上带来部分稳定增益：validation 与 complete-case 结果改善明显，test `ROC-AUC` 与 `balanced_accuracy` 提升，但 full `level2` test `PR-AUC` 未继续上升
+- 已确认 `pH + alkalinity + TOC` complete-case 子集上删除 missing flags 后结果与保留 flags 完全一致，说明相关 flags 在该子集内只是常量列
+- 已完成 `baseline_without_n_facilities` 轻量敏感性检查，并确认 `n_facilities_in_master` 对 baseline 有一定贡献但不是压倒性驱动项
 
 ## 9. 最近一次更新
 
-最后更新时间：2026-04-03 11:04（Asia/Hong_Kong）
+最后更新时间：2026-04-03 12:07（Asia/Hong_Kong）
 
 最近更新内容：
 
-- 新增文档 `docs/06_v4/07_v4_3_prompt/V4_3_TOC_Increment_Codex_Prompt.md`
-- 已将 `V4.3` 的正式方向固定为：在 `V4.2.1` 底座上进行 `TOC` 增量实验，而不是直接切入 `free_chlorine`、树模型或调参
-- 已把 `V4.3` 所需的对照链、缺失处理要求、争议点、禁止事项和输出要求写成新的 Codex 执行 prompt
-- 已明确 `V4.3` 必须保留 `level2 baseline reference`、`mechanistic stage1 reference`、complete-case reference，以及必要的 no-missing-flags 敏感性检查
-- 已明确当前体系仍属于“预测增强实验框架”，`V4.3` 必须继续控制解释边界，不能把 `level2` 增益直接写成全国主结论或因果发现
+- 新增脚本 `scripts/train_v4_tthm_regulatory_l2_toc_increment.py`
+- 新增脚本 `scripts/train_v4_tthm_anchored_l2_toc_increment.py`
+- 更新 `scripts/v4_tthm_training_common.py`，补充版本化结果目录能力与扩展分类指标输出
+- 新增文档 `docs/06_v4/08_v4_3_execution/V4_3_Level2_TOC_Increment_Execution_Report.md`
+- 已完成 `V4.3 level2 TOC increment` 的两条正式任务，并将结果写入 `data_local/V4_Chapter1_Part1_Experiments/V4_3/...`
+- 已确认 `TOC` 在 `anchored` 任务上提供稳定且显著的边际增益
+- 已确认 `TOC` 在 `regulatory` 任务上提供部分稳定增益，但不能写成所有主指标都继续上升
+- 已确认 `pH + alkalinity + TOC` complete-case 子集上删除 missing flags 不改变结果
+- 已完成 `baseline_without_n_facilities` 敏感性检查，支持继续把 `n_facilities_in_master` 视为结构代理特征而非纯机制变量
 
 对应提交：
 
 - 最近已推送提交：`f04df63`（`feat: add V4 execution pipeline and reorganize docs`）
-- 本次新增 `V4.3` 执行 prompt 与相关文档更新尚未提交，待用户确认是否执行 Git 提交与推送
+- 本次 `V4.3` 脚本、结果与执行文档更新尚未提交，待用户确认是否执行 Git 提交与推送
 
 ## 10. 下一步任务
 
 下一步最具体的工作是：
 
-- 根据 `docs/06_v4/07_v4_3_prompt/V4_3_TOC_Increment_Codex_Prompt.md` 启动 `V4.3`
-- 在 `V4.2.1` 的 `level2 mechanistic stage1` 底座上加入 `TOC + toc_missing_flag`
-- 保留 `level2 baseline reference`、`mechanistic stage1 reference`、complete-case reference 和必要的 no-missing-flags 敏感性检查
-- 在确认 `TOC` 的边际增益后，再决定是否进入 `free_chlorine`
-- 继续维护统一结果汇总表，把后续 regulatory 与 anchored 的新增实验并入同一比较框架
+- 以 `V4.3` 为已完成底座，评估是否进入 `free_chlorine + free_chlorine_missing_flag` 的下一轮增量实验
+- 若进入 `V4.4`，继续保留 `level2 baseline reference`、`mechanistic stage1 reference`、`TOC increment reference`、complete-case reference 和 no-missing-flags 敏感性检查
+- 在下一轮中继续分别跟踪 `regulatory` 与 `anchored`，避免把 `anchored` 的强增益误写成全部任务的一致结论
+- 继续维护统一结果汇总表，把后续新增实验并入同一比较框架
 - 保持第二层 `facility-month` 机制线并行，但不与第三层全国主模型线混表
 - 暂不进入树模型与超参数优化，先把机制变量的增量顺序与口径稳定性固定清楚
 

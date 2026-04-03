@@ -159,7 +159,7 @@
 - 检查 `TOC` 在完整观测子集上是否仍保留增益
 - 避免把 `toc_missing_flag` 或 complete-case 筛选效应误写成 `TOC` 数值增益
 
-## 7. 可选但建议执行的补充实验
+## 7. 需要执行的补充实验
 
 ### 7.1 complete-case 去掉 missing flags 的敏感性版本
 
@@ -251,17 +251,31 @@
 
 ### 11.2 本地结果目录
 
-建议继续写入：
+本轮结果目录不再建议直接平铺写入旧的按任务目录，而应先在实验总目录下新增 `V4_3` 版本层，再在其下按任务分目录。
 
-- `data_local/V4_Chapter1_Part1_Experiments/tthm_regulatory_exceedance_prediction/`
-- `data_local/V4_Chapter1_Part1_Experiments/tthm_anchored_risk_prediction/`
+建议写入：
+
+- `data_local/V4_Chapter1_Part1_Experiments/V4_3/tthm_regulatory_exceedance_prediction/`
+- `data_local/V4_Chapter1_Part1_Experiments/V4_3/tthm_anchored_risk_prediction/`
+
+这样做的原因是：
+
+- 将 `V4.2` 与 `V4.3` 的结果物理隔离，避免不同子版本结果混放
+- 让结果目录结构与 `docs/06_v4` 下按版本分层的文档结构保持一致
+- 便于后续继续扩展 `V4.4`、`V4.5` 等版本，而不是把所有实验都堆叠在同一任务目录下
+
+因此：
+
+- 目录负责表达 `V4.3`
+- 文件名主要负责表达具体实验配置
 
 并在文件名中明确体现：
 
 - `level2`
 - `toc_increment`
-- `V4.3`
 - `logistic_regression`
+
+如有必要，也可以在文件名中保留 `V4.3`，但不强制，因为目录层已经承担了版本表达功能。
 
 ### 11.3 文档
 
