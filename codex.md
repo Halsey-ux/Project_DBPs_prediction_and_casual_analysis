@@ -22,13 +22,13 @@
 
 ## 3. 当前阶段目标
 
-当前阶段目标是完成 V4 第三层全国主线的结构/覆盖条件增强验证，并据此决定第三层主线是先阶段性收束，还是再进入 treatment summary features 补充实验：
+当前阶段目标已经从 `V4.5` 的结构/覆盖条件增强验证推进到 `V4.6` 完成后的第三层主线阶段性收束与正式特征制度固定：
 
-- 固定第三层 `TTHM` 主线在 `level1` 上的全国 baseline 与结构/覆盖条件增强对照链
-- 基于 `V4_pws_year_ml_ready.csv` 完成 `V4.5` 的 `level1` 主实验与 `level2` 补充对照
-- 判断结构/覆盖条件特征是否值得纳入第三层全国主线正式预测模型
-- 区分“全国主线风险画像增强”与“环境机制增强”的解释边界
-- 在完成 `V4.5` 后，决定是优先收束第三层主线结论，还是继续进入 treatment summary features 增量实验
+- 固定第三层 `TTHM` 主线在 `level1` 上的全国 baseline、`V4.5 structural conditional` 与 `V4.6 treatment combined` 对照链
+- 判断 treatment summary 特征在控制 `V4.5 structural conditional` 后是否仍提供独立增量价值
+- 明确 treatment summary 特征是否值得作为第三层正式预测模型的辅助增强层纳入
+- 继续区分“全国主线风险画像增强”“工程背景辅助增强”与“环境机制增强”的解释边界
+- 基于 `V4.1` 至 `V4.6` 的累计结果，决定第三层全国主线是先阶段性收束，还是再继续追加新的补充实验
 
 ## 4. 目录结构
 
@@ -322,35 +322,52 @@ GitHub 不直接管理：
 - 已确认 `n_facilities_in_master` 仍有轻微贡献，但不是压倒性驱动项；`level1 baseline` 去掉该变量后，`regulatory` 与 `anchored` 的 test `PR-AUC` 仅分别下降约 `0.0020` 与 `0.0028`
 - 已确认 `level1` 与 `level2` 对同一组结构/覆盖条件特征的响应方向一致，但 `level2` 的绝对 test `PR-AUC` 增益更大
 - 已明确 `V4.5` 的最稳妥结论是：结构/覆盖条件特征值得纳入第三层全国主线正式预测模型，但其学术定位应是“风险画像增强”或“观测制度代理增强”，而不是“机制增强”
+- 已新增文档 `docs/06_v4/14_v4_6_prompt/V4_6_PWS_Year_Treatment_Summary_Increment_Codex_Prompt.md`
+- 已将 `V4.6` 的正式方向固定为：在 `level1` 全国主线中测试 treatment summary 特征在 `baseline` 与 `V4.5 structural conditional` 对照框架下的独立增量价值
+- 已明确 `V4.6` 必须至少保留 `baseline reference`、`structural conditional reference`、`treatment summary increment` 与 `structural + treatment combined` 四层对照链
+- 已明确 `V4.6` 中的 treatment summary 特征只能被解释为系统工程背景或制度代理信号，不能被误写成环境机制发现
+- 已新增脚本 `scripts/v4_6_treatment_summary_common.py`
+- 已新增脚本 `scripts/train_v4_tthm_regulatory_l1_treatment_summary_increment.py`
+- 已新增脚本 `scripts/train_v4_tthm_anchored_l1_treatment_summary_increment.py`
+- 已新增脚本 `scripts/train_v4_tthm_regulatory_l2_treatment_summary_increment.py`
+- 已新增脚本 `scripts/train_v4_tthm_anchored_l2_treatment_summary_increment.py`
+- 已完成 `V4.6 PWS-year treatment summary increment` 的两条 `level1` 正式主任务与两条 `level2` 补充对照，结果统一写入 `data_local/V4_Chapter1_Part1_Experiments/V4_6/`
+- 已新增中文执行报告 `docs/06_v4/15_v4_6_execution/V4_6_PWS_Year_Treatment_Summary_Increment_Execution_Report.md`
+- 已确认 treatment summary 特征单独相对 `baseline` 的收益有限，在 `level1 regulatory` 上几乎没有稳定独立价值
+- 已确认 treatment summary 特征在控制 `V4.5 structural conditional` 后仍保留小而稳定的剩余增益，且 `anchored` 强于 `regulatory`
+- 已确认 `level1` 与 `level2` 对 treatment summary 的响应方向一致，但 `level2` 增益更强，这与 treatment 字段在 `level2` 中覆盖率更高相一致
+- 已明确 `V4.6` 的最稳妥定位是“工程背景辅助增强”或“制度代理辅助增强”，而不是“环境机制增强”
+- 已明确当前更建议先阶段性收束第三层全国主线，把 `baseline`、`V4.5 structural conditional` 与 `V4.6 treatment combined` 的定位关系固定下来
 
 ## 9. 最近一次更新
 
-最后更新时间：2026-04-03 16:30（Asia/Hong_Kong）
+最后更新时间：2026-04-03 17:01（Asia/Hong_Kong）
 
 最近更新内容：
 
-- 已新增 `V4.5` 共享配置脚本 `scripts/v4_5_structural_conditional_common.py` 与 4 个训练脚本，用于执行 `level1` 主实验和 `level2` 补充对照
-- 已完成 `V4.5 PWS-year structural conditional increment`，结果写入 `data_local/V4_Chapter1_Part1_Experiments/V4_5/`
-- 已新增中文执行报告 `docs/06_v4/13_v4_5_execution/V4_5_PWS_Year_Structural_Conditional_Increment_Execution_Report.md`
-- 已确认结构/覆盖条件特征在 `level1` 全国主线上显著提升 `regulatory` 与 `anchored` 两条任务的预测表现
-- 已确认 `annual_match_quality_tier` 只提供小幅附加收益，主体增益来自更基础的结构/覆盖计数特征
-- 已明确 `V4.5` 结果应被写成第三层全国主线的风险画像增强，而不是环境机制增强
+- 已新增 `V4.6` 共享配置脚本 `scripts/v4_6_treatment_summary_common.py` 与 4 个训练脚本，用于执行 `level1` 主实验和 `level2` 补充对照
+- 已完成 `V4.6 PWS-year treatment summary increment`，结果写入 `data_local/V4_Chapter1_Part1_Experiments/V4_6/`
+- 已新增中文执行报告 `docs/06_v4/15_v4_6_execution/V4_6_PWS_Year_Treatment_Summary_Increment_Execution_Report.md`
+- 已确认 treatment summary 单独相对 `baseline` 的收益较弱：`level1 regulatory` 的 test `PR-AUC` 从 `0.0690` 变为 `0.0688`，`level1 anchored` 从 `0.1162` 变为 `0.1183`
+- 已确认 treatment summary 在控制 `V4.5 structural conditional` 后仍保留独立增益：`level1 regulatory` 的 test `PR-AUC` 从 `0.1025` 升至 `0.1073`，`level1 anchored` 从 `0.1990` 升至 `0.2080`
+- 已确认 `level2` 的响应方向与 `level1` 一致且增幅更大，说明 treatment summary 在高信息样本中更有可用性
+- 已明确 `V4.6` 更适合写成第三层全国主线的工程背景辅助增强，而不是机制增强
+- 已明确当前更建议先阶段性收束第三层全国主线，而不是继续默认追加新的第三层补充实验
 
 对应提交：
 
-- 最近已推送提交：`5e90be6`（`docs: add V4.1-4 update summary with V4.4 and V4.4b findings`）
-- 本次 `V4.5` 脚本、结果文档与 `codex.md` 更新尚未提交，待用户确认是否执行 Git 提交与推送
+- 最近已推送提交：`16bf2ec`（`feat: complete V4.5 pws-year structural conditional increment experiments`）
+- 本次 `V4.6` 脚本、执行报告、结果目录与 `codex.md` 更新尚未提交，待用户确认是否执行 Git 提交与推送
 
 ## 10. 下一步任务
 
 下一步最具体的工作是：
 
-- 基于 `V4.5` 结果，收束第三层 `PWS-year` 全国主线的阶段性结论，明确 baseline、机制增强线与结构/覆盖条件增强线的各自定位
-- 把 `V4.5` 的结果并入统一比较框架，形成后续论文主线可直接引用的对照摘要
-- 如仍需继续扩展第三层主线，优先把 treatment summary features 设计为补充型增量实验，而不是默认主线延长
-- 如启动 treatment summary features 增量实验，必须继续保留 `level1 baseline reference` 与 `V4.5` 的结构/覆盖条件对照链
+- 对 `V4.1` 至 `V4.6` 的第三层全国主线结果进行阶段性总收束，固定正式对照链与论文写法
+- 如需要给出第三层最佳预测版，可优先采用 `baseline + V4.5 structural conditional + V4.6 treatment summary` 的 combined 版本
+- 在论文或报告中明确区分 `V4.5` 的风险画像增强、`V4.6` 的工程背景辅助增强与 `level2 TOC` 的机制增强定位
 - 保持第二层 `facility-month` 机制线并行，但不与第三层全国主模型线混表
-- 暂不进入树模型与超参数优化，先把第三层主线的解释边界和特征制度固定清楚
+- 暂不进入树模型与超参数优化，先把第三层主线的解释边界、特征制度和阶段结论固定清楚
 
 ---
 
