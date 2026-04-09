@@ -108,6 +108,9 @@ D:\Project_DBPs_prediction_and_casual_analysis
     - `V4_Chapter1_Framework_Summary.md`：第一章框架型总结
   - `07_v5/`：V5 第二层 `facility-month` 高信息增强 / 机制支撑模块规划目录
     - `01_v5_0_prompt/`：V5.0 第二层可执行性审计 prompt
+    - `02_v5_0_execution/`：V5.0 执行文档
+    - `03_v5_1_prompt/`：V5.1 第二层 baseline 冻结 prompt
+    - `04_v5_1_execution/`：V5.1 第二层 baseline 协议、执行报告与结果摘要
     - `V5_Master_Plan.md`：V5 总体计划
   - `V1_5_Update_Service_Scope_Summary.md`：V1-V5 大版本服务范围说明
 - `scripts/`
@@ -391,36 +394,41 @@ GitHub 不直接管理：
 
 ## 9. 最近一次更新
 
-最后更新时间：2026-04-08 20:07（Asia/Hong_Kong）
+最后更新时间：2026-04-08 21:11（Asia/Hong_Kong）
 
 最近更新内容：
 
-- 已完成 `V5.0` 真正第二层 `facility-month` 候选变量覆盖率、pairwise 重合度、complete-case 与 baseline 可执行性审计
-- 已新增 `scripts/build_v5_0_facility_month_readiness_audit.py`，并在 `data_local/V5_Chapter1_Part1_Facility_Month_Module/V5_0/` 下输出 8 份 CSV 摘要与 1 份本地中文摘要
-- 已新增 `docs/07_v5/02_v5_0_execution/V5_0_Facility_Month_Candidate_Coverage_And_Overlap_Audit_Report.md`
-- 已新增 `docs/07_v5/02_v5_0_execution/V5_0_Facility_Month_Feasibility_Judgement.md`
-- 已新增 `docs/07_v5/02_v5_0_execution/V5_0_Facility_Month_Baseline_And_Enhancement_Recommendations.md`
-- 已确认第二层 `baseline_core` 与 `TTHM` 同时可用的月样本为 `549,646`，占全部 `TTHM` 月样本的 `99.98%`
-- 已确认第二层当前最稳妥的第一轮正式增强组合是 `baseline + pH + alkalinity`，其 complete-case 为 `2,638` 行，高风险正例为 `164`
-- 已确认 `TOC` 在真正第二层下的 strict complete-case 边界比第三层内部第二级样本更严格：`baseline + pH + alkalinity + TOC` 仅剩 `37` 行、正例仅 `1` 行
-- 已确认 `free_chlorine` 与 `total_chlorine` 当前都不适合作为第二层正式主链变量，应暂停进入 `V5.1` 至 `V5.3` 的默认流程
-- 已据 `V5.0` 结果把 `V5_Master_Plan.md` 中的 `V5.3` 从“默认正式下一步”调整为“仅在 `V5.2` 后仍值得扩变量时才重新评估的专题分支”
-- 已进一步明确第二层当前最稳妥的角色定位是“机制支撑线为主、有限高信息增强为辅”，而不是已经成熟的第二层宽表主模型
+- 已完成 `V5.1` 真正第二层 `facility-month baseline freeze`
+- 已新增 `scripts/io_v5_facility_month.py`
+- 已新增 `scripts/build_v5_1_facility_month_splits.py`
+- 已新增 `scripts/v5_facility_month_training_common.py`
+- 已新增 `scripts/train_v5_1_facility_month_baseline.py`
+- 已在 `data_local/V5_Chapter1_Part1_Facility_Month_Module/V5_1/` 下输出正式切分文件、切分策略比较文件、baseline 特征集登记表与 baseline 实验结果表
+- 已正式固定第二层 `V5.1` 的任务为 `tthm_high_risk_month_prediction`，标签为 `is_tthm_high_risk_month`
+- 已正式固定第二层 `V5.1` 的主切分为 `group_by_pwsid`
+- 已正式固定第二层 `V5.1` 的第一版 baseline 为 `month + state_code + system_type + source_water_type + retail_population_served + adjusted_total_population_served`
+- 已确认 `has_treatment_summary` 不进入第一版正式 baseline，只保留为条件性对照字段
+- 已确认 `water_facility_type` 不进入第一版正式 baseline，只保留为条件性对照字段
+- 已确认 detailed treatment flags 全部排除在第一版正式 baseline 外
+- 已完成 `baseline_core_minimal_stage1_reference`，为 `V5.2 baseline + pH + alkalinity` 提供同子样本 baseline 对照
+- 已新增 `docs/07_v5/04_v5_1_execution/V5_1_Facility_Month_Baseline_Protocol.md`
+- 已新增 `docs/07_v5/04_v5_1_execution/V5_1_Facility_Month_Baseline_Execution_Report.md`
+- 已新增 `docs/07_v5/04_v5_1_execution/V5_1_Facility_Month_Baseline_Result_Summary.md`
 
 对应提交：
 
 - 最近已推送提交：`efc5061`（`feat: complete V4.6 pws-year treatment summary increment experiments`）
-- 本次 `V5.0` 审计脚本、本地摘要结果、执行文档、`V5_Master_Plan.md` 与 `codex.md` 更新尚未提交，待用户确认是否执行 Git 提交与推送
+- 本次 `V5.0` 审计脚本、本地摘要结果、`V5_Master_Plan.md`、`V5.1` baseline 冻结脚本、`V5.1` 本地结果、执行文档与 `codex.md` 更新尚未提交，待用户确认是否执行 Git 提交与推送
 
 ## 10. 下一步任务
 
 下一步最具体的工作是：
 
-- 基于 `V5.0` 审计结果正式启动 `V5.1`，固定第二层 `baseline_core` 的样本口径、标签口径、切分口径与禁止误用规则
-- 在 `V5.1` 基础上启动 `V5.2`，优先测试 `baseline + pH + alkalinity` 这一条当前唯一具备相对稳定样本支撑的第二层正式增强链
+- 基于已经固定的 `V5.1` 协议正式启动 `V5.2`，优先测试 `baseline_core_minimal + pH + alkalinity`
+- 在 `V5.2` 中严格沿用 `V5.1` 已冻结的标签口径、切分口径与 `baseline_core_minimal_stage1_reference`
 - 在 `V5.2` 完成前，暂停把 `TOC`、`free_chlorine` 与 `total_chlorine` 当作第二层正式主链默认下一步
 - 如需保留 `TOC`，应在 `V5.2` 后将其改写为第二层 reduced dataset 专题分支，而不是直接沿用原始 `V5.3` 线性计划
-- 将第二层当前角色正式固定为“机制支撑线为主、有限高信息增强为辅”，避免误写成已成熟的第二层宽表模型
+- 将第二层当前角色继续固定为“机制支撑线为主、有限高信息增强为辅”，避免误写成已成熟的第二层宽表模型
 - 继续统一项目文档与论文写法中的主线表述，明确第二层 `facility-month` 与第三层内部第二级样本不是同一对象
 - 将跨州、跨年份、跨系统类型的外推验证整理为后续“泛化性审计模块”，放在当前框架表述固定之后推进
 - 暂不进入树模型与超参数优化，先把第二层 baseline 边界、`V5.2` 机制核心链和整体框架角色分工固定清楚
