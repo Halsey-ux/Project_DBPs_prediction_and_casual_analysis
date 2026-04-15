@@ -11,7 +11,7 @@
 
 你当前要执行的是 `V4.3` 更新。`V4.3` 的正式主题是：
 
-- `level2 TOC increment`
+- `第二级样本 TOC increment`
 
 这轮更新的核心目标不是更换模型，不是追求调参，也不是扩展到更多变量，而是：
 
@@ -23,7 +23,7 @@
 
 在开始 `V4.3` 之前，你必须接受并沿用以下 `V4.2` 结论：
 
-1. `V4.2.1` 已确认：在 `level2` 上加入 `pH + alkalinity + missing flags` 后，两条任务线都相对各自对照版获得稳定提升
+1. `V4.2.1` 已确认：在 `第二级样本` 上加入 `pH + alkalinity + missing flags` 后，两条任务线都相对各自对照版获得稳定提升
 2. `V4.2.2` 已确认：在 `pH + alkalinity` 完整子集上，这种提升仍然成立，说明增益不太可能仅由 missing pattern 驱动
 3. `V4.2.2b` 已确认：在 complete-case 子集上删除 `ph_missing_flag` 和 `alkalinity_missing_flag` 后，结果与原 `V4.2.2` 完全一致，说明这两个 flag 在 complete-case 版本中只是冗余常量列
 4. 因此，`V4.3` 的最自然起点不是重新从 baseline 做起，而是在 `V4.2.1` 的机制底座上检验 `TOC` 的边际增益
@@ -32,11 +32,11 @@
 
 你必须带着以下批判性判断进入 `V4.3`，而不是把当前体系视为无争议正确：
 
-### 3.1 `level2` 不是纯机制样本
+### 3.1 `第二级样本` 不是纯机制样本
 
-- `level2` 是“高信息样本”，不是随机抽样的独立研究样本
+- `第二级样本` 是“高信息样本”，不是随机抽样的独立研究样本
 - 它的进入规则本身与变量可用性和数据完整性相关
-- 因此，`level2` 上的提升只能解释为“在高信息样本中观测到的增益”，不能直接写成全国主线最终结论
+- 因此，`第二级样本` 上的提升只能解释为“在高信息样本中观测到的增益”，不能直接写成全国主线最终结论
 
 ### 3.2 缺失处理仍需保持谨慎
 
@@ -82,9 +82,9 @@
 
 本轮主实验固定为：
 
-- `level2`
+- `第二级样本`
 
-本轮不把 `level1` 当作主增强实验层级，不把 `level3` 当作主实验层级。
+本轮不把 `第一级样本` 当作主增强实验层级，不把 `第三级样本` 当作主实验层级。
 
 ### 5.3 本轮主特征组
 
@@ -111,23 +111,23 @@
 
 `V4.3` 最大的风险不是跑不出结果，而是对照不完整，导致无法解释 `TOC` 是否真的带来边际增益。因此本轮必须至少保留以下 4 组版本：
 
-### 6.1 `level2 baseline reference`
+### 6.1 `第二级样本 baseline reference`
 
 定义：
 
-- 样本：全部 `level2`
+- 样本：全部 `第二级样本`
 - 特征：仅 baseline 4 个特征
 
 作用：
 
-- 作为当前 `level2` 主对照
+- 作为当前 `第二级样本` 主对照
 - 保证可以和 `V4.2.1`、`V4.3.1` 继续比较
 
-### 6.2 `level2 mechanistic stage1 reference`
+### 6.2 `第二级样本 mechanistic stage1 reference`
 
 定义：
 
-- 样本：全部 `level2`
+- 样本：全部 `第二级样本`
 - 特征：沿用 `V4.2.1`，即 `baseline + pH + alkalinity + missing flags`
 
 作用：
@@ -135,7 +135,7 @@
 - 它是 `V4.3` 最关键的直接参照物
 - `V4.3` 的问题不是“比 baseline 强不强”，而是“比 `V4.2.1` 多出来的 `TOC` 有没有额外价值”
 
-### 6.3 `level2 complete-case mechanistic stage1 reference`
+### 6.3 `第二级样本 complete-case mechanistic stage1 reference`
 
 定义：
 
@@ -147,7 +147,7 @@
 - 固定住 complete-case 子集样本
 - 为 `V4.3` 的 complete-case 版本提供直接参照
 
-### 6.4 `level2 complete-case TOC increment`
+### 6.4 `第二级样本 complete-case TOC increment`
 
 定义：
 
@@ -191,7 +191,7 @@
 
 对于 `V4.3` 主实验版本：
 
-- 保留 `level2` 样本
+- 保留 `第二级样本` 样本
 - 对数值变量做中位数填补
 - 保留 `ph_missing_flag`
 - 保留 `alkalinity_missing_flag`
@@ -235,7 +235,7 @@
 2. 直接引入 `total_chlorine`
 3. 直接切换树模型或 boosting 模型
 4. 提前做超参数优化
-5. 把 `level2` 结果直接写成全国主线最终结论
+5. 把 `第二级样本` 结果直接写成全国主线最终结论
 6. 把 `TOC` 的预测增益直接解释成机制定论或因果发现
 7. 跳过 `mechanistic stage1 reference` 而只拿 `V4.3` 与 baseline 比较
 
@@ -271,7 +271,7 @@
 
 并在文件名中明确体现：
 
-- `level2`
+- `第二级样本`
 - `toc_increment`
 - `logistic_regression`
 
@@ -317,7 +317,7 @@
 
 当前请你执行 `V4.3`，明确目标为：
 
-- 在 `V4.2.1` 的 `level2 mechanistic stage1` 底座上，加入 `TOC + toc_missing_flag`
+- 在 `V4.2.1` 的 `第二级样本 mechanistic stage1` 底座上，加入 `TOC + toc_missing_flag`
 - 继续跑 `tthm_regulatory_exceedance_prediction` 和 `tthm_anchored_risk_prediction`
 - 同时保留 `mechanistic stage1 reference`、complete-case reference 和必要的敏感性检查
 - 最终完成脚本、结果、中文文档和 `codex.md` 的同步更新

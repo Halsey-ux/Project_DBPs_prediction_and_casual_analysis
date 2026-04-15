@@ -13,7 +13,7 @@
 
 - 固定正式任务名
 - 固定 `X / Y` 定义
-- 固定 `level1 / level2 / level3` 的使用方式
+- 固定 `第一级样本 / 第二级样本 / 第三级样本` 的使用方式
 - 固定 baseline / enhanced / conditional 特征制度
 - 固定缺失处理和禁止误用边界
 
@@ -38,7 +38,7 @@ V4 的全国主模型只使用第三层系统-年份表：
 ### 3.1 任务 1：`tthm_regulatory_exceedance_prediction`
 
 - 任务性质：法规超标分类
-- 样本范围：全部 `level1` 样本
+- 样本范围：全部 `第一级样本` 样本
 - 目标列：`tthm_regulatory_exceed_label`
 - 正类定义：`tthm_sample_weighted_mean_ug_l >= 80`
 - 负类定义：`tthm_sample_weighted_mean_ug_l < 80`
@@ -79,7 +79,7 @@ V4 的全国主模型只使用第三层系统-年份表：
 ### 3.3 任务 3：`tthm_regression`
 
 - 任务性质：连续值回归
-- 样本范围：全部 `level1` 样本
+- 样本范围：全部 `第一级样本` 样本
 - 目标列：`tthm_sample_weighted_mean_ug_l`
 
 该任务学到的是：
@@ -139,21 +139,21 @@ V4 的全国主模型只使用第三层系统-年份表：
 
 ## 5. 样本层级的正式使用方式
 
-### 5.1 `level1`
+### 5.1 `第一级样本`
 
 - 筛选条件：`level1_flag = 1`
 - 当前样本数：`199,802`
 - 定位：全国广覆盖主线样本
 - 用途：第一版 baseline 主模型的默认训练范围
 
-### 5.2 `level2`
+### 5.2 `第二级样本`
 
 - 筛选条件：`level2_flag = 1`
 - 当前样本数：`26,975`
 - 定位：信息更高的增强模型样本
 - 用途：测试机制变量和缺失模式变量是否带来稳定增益
 
-### 5.3 `level3`
+### 5.3 `第三级样本`
 
 - 筛选条件：`level3_flag = 1`
 - 当前样本数：`6,193`
@@ -241,7 +241,7 @@ V4 的全国主模型只使用第三层系统-年份表：
 主要增强变量缺失率很高，因此：
 
 - 不能把增强变量直接视为默认全国主线特征
-- 更合理的策略是先建 `level1 + baseline`，再在 `level2` 上测试增强增益
+- 更合理的策略是先建 `第一级样本 + baseline`，再在 `第二级样本` 上测试增强增益
 
 ### 7.3 treatment 布尔字段解释风险高
 
@@ -303,19 +303,19 @@ V4 的全国主模型只使用第三层系统-年份表：
 
 当前建议固定为以下顺序：
 
-1. `level1 + baseline_default`  
+1. `第一级样本 + baseline_default`  
    用于建立全国主线 baseline
 
-2. `level1 + baseline_default + structural_conditional`  
+2. `第一级样本 + baseline_default + structural_conditional`  
    测试结构/覆盖变量是否带来稳定增益
 
-3. `level1 + baseline_default + treatment_conditional`  
+3. `第一级样本 + baseline_default + treatment_conditional`  
    测试 treatment 摘要信号是否带来稳定增益
 
-4. `level2 + baseline_default + enhanced_default`  
+4. `第二级样本 + baseline_default + enhanced_default`  
    测试机制变量是否真正提升结果
 
-5. `level3 + baseline_default + enhanced_default`  
+5. `第三级样本 + baseline_default + enhanced_default`  
    只用于稳健性和解释性检查
 
 ## 11. 禁止误用规则
@@ -333,5 +333,5 @@ V4 当前最重要的不是立刻堆复杂特征，而是：
 
 - 固定正式任务名
 - 固定正式 `X / Y`
-- 先跑 `level1 + baseline_default`
+- 先跑 `第一级样本 + baseline_default`
 - 再把结构/覆盖、treatment 和机制变量放到明确对照框架里测试

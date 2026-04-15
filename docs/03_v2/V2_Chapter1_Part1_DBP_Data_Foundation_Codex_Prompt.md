@@ -1,4 +1,4 @@
-﻿# V2_Chapter1_Part1_DBP_Data_Foundation_Codex_Prompt
+# V2_Chapter1_Part1_DBP_Data_Foundation_Codex_Prompt
 
 你现在要协助我完成论文/项目的“第一章第一部分”，主题是：
 

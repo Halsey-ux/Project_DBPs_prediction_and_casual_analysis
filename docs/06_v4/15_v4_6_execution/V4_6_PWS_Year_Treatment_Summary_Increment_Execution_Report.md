@@ -14,7 +14,7 @@
 
 本轮执行的是 `V4.6 PWS-year treatment summary increment`。核心目标不是继续向第三层全国主线中加入新的高稀疏化学数值变量，也不是切换到树模型、boosting 或超参数优化，而是回答以下问题：
 
-- 在 `level1 baseline` 基础上，年度 treatment summary 特征是否已经具有独立预测价值
+- 在 `第一级样本 baseline` 基础上，年度 treatment summary 特征是否已经具有独立预测价值
 - 在控制 `V4.5 structural conditional` 特征后，treatment summary 是否仍保留额外增益
 - 这类增益更适合被解释为系统工程背景信号、制度代理信息，还是可直接写成环境机制发现
 
@@ -29,9 +29,9 @@
 
 ### 2.2 样本层级
 
-- 主实验固定为 `level1`
-- 补充对照保留 `level2`
-- `level2` 只用于补充解释，不替代全国主线结论
+- 主实验固定为 `第一级样本`
+- 补充对照保留 `第二级样本`
+- `第二级样本` 只用于补充解释，不替代全国主线结论
 
 ### 2.3 本轮 treatment summary 特征组
 
@@ -51,7 +51,7 @@
 
 ### 2.4 保留的对照链
 
-每个任务在 `level1` 与 `level2` 都保留以下四层版本：
+每个任务在 `第一级样本` 与 `第二级样本` 都保留以下四层版本：
 
 1. `baseline_default_reference`
 2. `structural_conditional_reference_v4_5_1`
@@ -67,15 +67,15 @@
 
 在 `V4_pws_year_ml_ready.csv` 中：
 
-- `level1` 共 `199,802` 行，其中至少有 1 个 treatment summary 字段非缺失的行数为 `26,702`，占 `13.36%`
-- `level1` 有 `173,100` 行在 6 个 treatment summary 字段上全部缺失，占 `86.64%`
-- `level2` 共 `26,975` 行，其中至少有 1 个 treatment summary 字段非缺失的行数为 `19,266`，占 `71.43%`
-- `level2` 有 `7,709` 行在 6 个 treatment summary 字段上全部缺失，占 `28.57%`
+- `第一级样本` 共 `199,802` 行，其中至少有 1 个 treatment summary 字段非缺失的行数为 `26,702`，占 `13.36%`
+- `第一级样本` 有 `173,100` 行在 6 个 treatment summary 字段上全部缺失，占 `86.64%`
+- `第二级样本` 共 `26,975` 行，其中至少有 1 个 treatment summary 字段非缺失的行数为 `19,266`，占 `71.43%`
+- `第二级样本` 有 `7,709` 行在 6 个 treatment summary 字段上全部缺失，占 `28.57%`
 
 这意味着：
 
-- treatment summary 在 `level1` 全国主样本上的覆盖率并不高
-- 它在 `level2` 高信息样本中的可用度明显更强，因此 `level2` 中出现更大增益是可解释的
+- treatment summary 在 `第一级样本` 全国主样本上的覆盖率并不高
+- 它在 `第二级样本` 高信息样本中的可用度明显更强，因此 `第二级样本` 中出现更大增益是可解释的
 
 ### 2.6 缺失处理与解释边界
 
@@ -88,17 +88,17 @@
 
 ### 3.1 `tthm_regulatory_exceedance_prediction`
 
-- `level1`：train `140,580`，validation `29,692`，test `29,530`
-- `level2`：train `19,320`，validation `3,761`，test `3,894`
+- `第一级样本`：train `140,580`，validation `29,692`，test `29,530`
+- `第二级样本`：train `19,320`，validation `3,761`，test `3,894`
 
 ### 3.2 `tthm_anchored_risk_prediction`
 
-- `level1`：train `106,182`，validation `22,483`，test `22,126`
-- `level2`：train `12,589`，validation `2,399`，test `2,513`
+- `第一级样本`：train `106,182`，validation `22,483`，test `22,126`
+- `第二级样本`：train `12,589`，validation `2,399`，test `2,513`
 
 ## 4. 结果总览
 
-### 4.1 `level1` 全国主线
+### 4.1 `第一级样本` 全国主线
 
 #### `tthm_regulatory_exceedance_prediction`
 
@@ -130,7 +130,7 @@
 - 但在 `V4.5 structural conditional` 之后仍存在稳定剩余增益：`validation PR-AUC` 增加 `+0.0045`，`test PR-AUC` 增加 `+0.0090`
 - `anchored` 是本轮 treatment summary 增益更清晰的任务
 
-### 4.2 `level2` 补充对照
+### 4.2 `第二级样本` 补充对照
 
 #### `tthm_regulatory_exceedance_prediction`
 
@@ -143,9 +143,9 @@
 
 关键观察：
 
-- `level2` 中 treatment summary 单独相对 baseline 已有一定增益，`test PR-AUC` 提升 `+0.0119`
+- `第二级样本` 中 treatment summary 单独相对 baseline 已有一定增益，`test PR-AUC` 提升 `+0.0119`
 - treatment summary 加到 structural conditional 后，`validation PR-AUC` 再提升 `+0.0064`，`test PR-AUC` 再提升 `+0.0048`
-- 方向与 `level1` 一致，但增幅更大
+- 方向与 `第一级样本` 一致，但增幅更大
 
 #### `tthm_anchored_risk_prediction`
 
@@ -166,7 +166,7 @@
 
 ### 5.1 与 `V4.1 baseline` 的关系
 
-- `V4.1` 固定了第三层全国主线的最小起点：`level1 + baseline_default`
+- `V4.1` 固定了第三层全国主线的最小起点：`第一级样本 + baseline_default`
 - `V4.6` 延续同一切分、同一模型、同一评价框架，因此与 `V4.1` 保持直接可比
 - 本轮结果显示：treatment summary 单独相对 baseline 的增益有限，不足以像 `V4.5` 那样重新定义全国主线
 
@@ -178,14 +178,14 @@
 
 ### 5.3 与 `V4.3 TOC`、`V4.4 free_chlorine`、`V4.4b total_chlorine` 的关系
 
-- `TOC` 仍是当前最可信的机制增强变量，但其主要证据来自 `level2`
-- `free_chlorine` 在 `level2` 上只有弱边际增益，且难以区分数值信号和缺失模式信号
+- `TOC` 仍是当前最可信的机制增强变量，但其主要证据来自 `第二级样本`
+- `free_chlorine` 在 `第二级样本` 上只有弱边际增益，且难以区分数值信号和缺失模式信号
 - `total_chlorine` 当前不适合继续进入第三层正式增量实验
 - 与这些结果相比，`V4.6 treatment summary` 更像是工程背景辅助增强，而不是机制增强
 
 ## 6. 对核心问题的回答
 
-### 6.1 在 `level1 baseline` 基础上加入 treatment summary 后，是否带来稳定提升
+### 6.1 在 `第一级样本 baseline` 基础上加入 treatment summary 后，是否带来稳定提升
 
 不充分。
 
@@ -198,9 +198,9 @@
 
 有，而且方向稳定。
 
-- `level1 regulatory`：`test PR-AUC` 从 `0.1025` 升到 `0.1073`
-- `level1 anchored`：`test PR-AUC` 从 `0.1990` 升到 `0.2080`
-- `level2` 两个任务也都继续上升
+- `第一级样本 regulatory`：`test PR-AUC` 从 `0.1025` 升到 `0.1073`
+- `第一级样本 anchored`：`test PR-AUC` 从 `0.1990` 升到 `0.2080`
+- `第二级样本` 两个任务也都继续上升
 
 因此可以认为 treatment summary 与 `V4.5 structural conditional` 并非完全重复。
 
@@ -209,7 +209,7 @@
 主要体现为：
 
 - `anchored` 强于 `regulatory`
-- `level2` 强于 `level1`
+- `第二级样本` 强于 `第一级样本`
 
 这与 treatment 字段在高信息样本中的覆盖率更高相一致。
 
@@ -225,12 +225,12 @@
 
 - 可直接写成 DBP 生成机制的环境变量发现
 
-### 6.5 `level1` 与 `level2` 对 treatment summary 的响应方向是否一致
+### 6.5 `第一级样本` 与 `第二级样本` 对 treatment summary 的响应方向是否一致
 
 一致。
 
 - 两个任务在两个层级上都表现为 `combined > structural reference`
-- 只是 `level2` 的增益更强、更容易被看见
+- 只是 `第二级样本` 的增益更强、更容易被看见
 
 ### 6.6 当前是否支持把 treatment summary 纳入第三层正式模型
 
@@ -250,12 +250,12 @@
 本轮可以明确写出的结论是：
 
 1. `V4.6` 已完成，treatment summary 在第三层 `PWS-year` 全国主线中不构成新的独立主增强层。
-2. treatment summary 单独相对 baseline 的收益有限，尤其在 `level1 regulatory` 上几乎没有独立价值。
-3. 但在控制 `V4.5 structural conditional` 后，treatment summary 仍提供小而稳定的剩余增益，且在 `anchored` 与 `level2` 上更明显。
+2. treatment summary 单独相对 baseline 的收益有限，尤其在 `第一级样本 regulatory` 上几乎没有独立价值。
+3. 但在控制 `V4.5 structural conditional` 后，treatment summary 仍提供小而稳定的剩余增益，且在 `anchored` 与 `第二级样本` 上更明显。
 4. 因此 treatment summary 可被纳入第三层正式预测模型的扩展版，但更适合写成“工程背景辅助增强”，不应写成“机制增强”。
 
 关于下一步，更建议：
 
 1. 先阶段性收束第三层全国主线，把 `baseline`、`V4.5 structural conditional`、`V4.6 treatment combined` 的定位关系固定下来。
 2. 若需要正式给出第三层最佳预测版，可采用 `baseline + structural conditional + treatment summary` 的 combined 版本。
-3. 若需要强调学术解释边界，应继续把机制发现主证据保留在 `level2 TOC` 路线，而不是把 `V4.6` 写成机制结果。
+3. 若需要强调学术解释边界，应继续把机制发现主证据保留在 `第二级样本 TOC` 路线，而不是把 `V4.6` 写成机制结果。

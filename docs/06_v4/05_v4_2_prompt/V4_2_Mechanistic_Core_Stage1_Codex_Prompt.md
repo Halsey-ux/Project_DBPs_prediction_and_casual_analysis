@@ -45,7 +45,7 @@
 
 `V4.2.1` 是当前这一轮的主实验版本，含义是：
 
-- 在 `level2` 上保留样本
+- 在 `第二级样本` 上保留样本
 - 在 baseline 基础上加入 `pH`、`alkalinity` 及对应 missing flag
 - 默认采用缺失保留 + 数值填补 + missing flag 方案
 
@@ -53,7 +53,7 @@
 
 `V4.2.2` 是当前这一轮的补充稳健性版本，含义是：
 
-- 在 `level2` 中，仅保留 `ph_sample_weighted_mean` 和 `alkalinity_sample_weighted_mean_mg_l` 同时非缺失的样本
+- 在 `第二级样本` 中，仅保留 `ph_sample_weighted_mean` 和 `alkalinity_sample_weighted_mean_mg_l` 同时非缺失的样本
 - 在完整子集上重复当前两条正式任务
 - 用于检查 `V4.2.1` 的增益是否主要来自缺失模式
 
@@ -61,12 +61,12 @@
 
 本轮主实验样本层级固定为：
 
-- `level2`
+- `第二级样本`
 
 本轮不使用：
 
-- `level1` 作为主增强实验样本
-- `level3` 作为主实验样本
+- `第一级样本` 作为主增强实验样本
+- `第三级样本` 作为主实验样本
 
 ### 3.4 正式任务
 
@@ -112,20 +112,20 @@
 
 `V4.2.1` 主实验不采用 complete-case 作为默认方案。当前主实验默认采用：
 
-- 保留 `level2` 样本
+- 保留 `第二级样本` 样本
 - 对数值变量做填补
 - 保留 `ph_missing_flag`
 - 保留 `alkalinity_missing_flag`
 
 需要明确：
 
-- `level2` 不等于 `pH` 和 `alkalinity` 一定都完整
-- `V4.2.1` 允许 `pH` / `alkalinity` 在 `level2` 中仍然存在缺失
+- `第二级样本` 不等于 `pH` 和 `alkalinity` 一定都完整
+- `V4.2.1` 允许 `pH` / `alkalinity` 在 `第二级样本` 中仍然存在缺失
 - missing flag 的作用是让模型知道这些变量原本哪些行缺失
 
 `V4.2.2` 则采用完整子集稳健性规则：
 
-- 在 `level2` 中，只保留 `pH` 和 `alkalinity` 同时非缺失的样本
+- 在 `第二级样本` 中，只保留 `pH` 和 `alkalinity` 同时非缺失的样本
 - 不再依赖这两项变量的缺失保留来构造主分析样本
 
 ## 5. 本轮补充稳健性实验
@@ -136,7 +136,7 @@
 
 该实验定义为：
 
-- 在 `level2` 中，仅保留 `ph_sample_weighted_mean` 和 `alkalinity_sample_weighted_mean_mg_l` 同时非缺失的样本
+- 在 `第二级样本` 中，仅保留 `ph_sample_weighted_mean` 和 `alkalinity_sample_weighted_mean_mg_l` 同时非缺失的样本
 
 这一补充实验的作用是：
 
@@ -169,7 +169,7 @@
 
 并在文件名中明确体现：
 
-- `level2`
+- `第二级样本`
 - `mechanistic_stage1`
 - `V4.2.1` 和 `V4.2.2`
 - `logistic_regression`
@@ -194,7 +194,7 @@
 
 本轮完成后，需要至少回答这些问题：
 
-1. `V4.2.1` 在 `level2` 上加入 `pH + alkalinity + missing flag` 后，是否较 `V4.1` baseline 有稳定提升
+1. `V4.2.1` 在 `第二级样本` 上加入 `pH + alkalinity + missing flag` 后，是否较 `V4.1` baseline 有稳定提升
 2. 提升主要体现在哪个任务上：
    - `regulatory`
    - `anchored`
@@ -213,7 +213,7 @@
 3. 直接加入 `total_chlorine`
 4. 直接切换到树模型或 boosting 模型
 5. 提前做超参数优化
-6. 把 `level2` 结果直接写成全国主线最终结论
+6. 把 `第二级样本` 结果直接写成全国主线最终结论
 7. 把 `V4.2.1` 中缺失保留版的提升直接写成“明确机制发现”
 
 ## 9. 完成后的收尾要求
@@ -239,7 +239,7 @@
 
 当前请你执行 `V4.2`，并明确区分两个子更新：
 
-- `V4.2.1`：在 `level2` 上，用 `baseline + pH + alkalinity + missing flags` 跑两条正式任务的 `LogisticRegression` 增强实验
-- `V4.2.2`：在 `level2` 的 `pH + alkalinity` 完整子集上，重复对应稳健性版本实验
+- `V4.2.1`：在 `第二级样本` 上，用 `baseline + pH + alkalinity + missing flags` 跑两条正式任务的 `LogisticRegression` 增强实验
+- `V4.2.2`：在 `第二级样本` 的 `pH + alkalinity` 完整子集上，重复对应稳健性版本实验
 
 完成脚本、结果、文档和 `codex.md` 同步更新。

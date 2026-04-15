@@ -14,9 +14,9 @@
 
 本轮执行的是 `V4.5 PWS-year structural conditional increment`。目标不是继续往第三层全国主线中加入高稀疏化学变量，也不是切换到树模型或超参数优化，而是回到第三层 `PWS-year` 全国主线真正需要回答的问题：
 
-- 在 `level1 baseline` 基础上，结构/覆盖条件特征是否能稳定提升全国主线风险识别
+- 在 `第一级样本 baseline` 基础上，结构/覆盖条件特征是否能稳定提升全国主线风险识别
 - 这种提升更像来自系统结构与观测覆盖代理信息，还是来自可写成环境机制的信号
-- 在 `level1` 主线和 `level2` 高信息子样本中，这组特征的响应方向是否一致
+- 在 `第一级样本` 主线和 `第二级样本` 高信息子样本中，这组特征的响应方向是否一致
 
 本轮继续只围绕第三层 `PWS-year` 主表展开，不引入第二层 `facility-month` 字段，不进入 treatment summary features、boosting、树模型或超参数优化，也不保存模型文件。
 
@@ -29,9 +29,9 @@
 
 ### 2.2 样本层级
 
-- 主实验固定为 `level1`
-- 补充对照为 `level2`
-- 不把 `level2` 重新写回全国主线主结论
+- 主实验固定为 `第一级样本`
+- 补充对照为 `第二级样本`
+- 不把 `第二级样本` 重新写回全国主线主结论
 
 ### 2.3 本轮主特征组
 
@@ -62,18 +62,18 @@
 
 ### 3.1 保留的对照链
 
-`level1` 主实验对每个任务保留以下 4 个版本：
+`第一级样本` 主实验对每个任务保留以下 4 个版本：
 
-1. `level1 baseline reference`
-2. `level1 structural conditional increment`
-3. `level1 baseline without n_facilities`
-4. `level1 structural conditional without annual_match_quality_tier`
+1. `第一级样本 baseline reference`
+2. `第一级样本 structural conditional increment`
+3. `第一级样本 baseline without n_facilities`
+4. `第一级样本 structural conditional without annual_match_quality_tier`
 
-`level2` 补充对照对每个任务保留以下 3 个版本：
+`第二级样本` 补充对照对每个任务保留以下 3 个版本：
 
-1. `level2 baseline reference`
-2. `level2 structural conditional increment`
-3. `level2 structural conditional without annual_match_quality_tier`
+1. `第二级样本 baseline reference`
+2. `第二级样本 structural conditional increment`
+3. `第二级样本 structural conditional without annual_match_quality_tier`
 
 ### 3.2 缺失处理规则
 
@@ -84,7 +84,7 @@
 
 ### 3.3 本轮可执行性边界
 
-与 `free_chlorine`、`total_chlorine` 路线不同，本轮结构/覆盖条件特征在 `level1` 和 `level2` 中均接近满覆盖，因此：
+与 `free_chlorine`、`total_chlorine` 路线不同，本轮结构/覆盖条件特征在 `第一级样本` 和 `第二级样本` 中均接近满覆盖，因此：
 
 - 不需要 complete-case 子集才能运行主实验
 - 不存在因极端稀疏导致训练不可执行的问题
@@ -94,30 +94,30 @@
 
 ### 4.1 `tthm_regulatory_exceedance_prediction`
 
-- `level1`：train `140,580`，validation `29,692`，test `29,530`
-- `level2`：train `19,320`，validation `3,761`，test `3,894`
+- `第一级样本`：train `140,580`，validation `29,692`，test `29,530`
+- `第二级样本`：train `19,320`，validation `3,761`，test `3,894`
 
 ### 4.2 `tthm_anchored_risk_prediction`
 
-- `level1`：train `106,182`，validation `22,483`，test `22,126`
-- `level2`：train `12,589`，validation `2,399`，test `2,513`
+- `第一级样本`：train `106,182`，validation `22,483`，test `22,126`
+- `第二级样本`：train `12,589`，validation `2,399`，test `2,513`
 
 ## 5. 结果总览
 
-### 5.1 `level1` 全国主线
+### 5.1 `第一级样本` 全国主线
 
 #### `tthm_regulatory_exceedance_prediction`
 
 | 版本 | Validation PR-AUC | Validation ROC-AUC | Validation Balanced Accuracy | Test PR-AUC | Test ROC-AUC | Test Balanced Accuracy |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| `level1 baseline reference` | 0.0696 | 0.7218 | 0.6678 | 0.0690 | 0.7046 | 0.6578 |
-| `level1 structural conditional increment` | 0.1003 | 0.8241 | 0.7598 | 0.1025 | 0.8149 | 0.7578 |
-| `level1 baseline without n_facilities` | 0.0700 | 0.7204 | 0.6678 | 0.0670 | 0.7032 | 0.6575 |
-| `level1 structural conditional without annual_match_quality_tier` | 0.0978 | 0.8219 | 0.7566 | 0.0954 | 0.8128 | 0.7565 |
+| `第一级样本 baseline reference` | 0.0696 | 0.7218 | 0.6678 | 0.0690 | 0.7046 | 0.6578 |
+| `第一级样本 structural conditional increment` | 0.1003 | 0.8241 | 0.7598 | 0.1025 | 0.8149 | 0.7578 |
+| `第一级样本 baseline without n_facilities` | 0.0700 | 0.7204 | 0.6678 | 0.0670 | 0.7032 | 0.6575 |
+| `第一级样本 structural conditional without annual_match_quality_tier` | 0.0978 | 0.8219 | 0.7566 | 0.0954 | 0.8128 | 0.7565 |
 
 关键观察：
 
-- 相对 `level1 baseline`，结构/覆盖条件特征在 validation 与 test 的三项主指标上都明显提升。
+- 相对 `第一级样本 baseline`，结构/覆盖条件特征在 validation 与 test 的三项主指标上都明显提升。
 - `validation PR-AUC` 提升 `+0.0307`，`test PR-AUC` 提升 `+0.0336`，不是边际波动级别。
 - 去掉 `annual_match_quality_tier` 后，结果仍显著优于 baseline，说明增益不只是由年度质量标签单独驱动。
 - 加回 `annual_match_quality_tier` 后，`test PR-AUC` 仍进一步提升 `+0.0072`，表明它有小幅但稳定的附加贡献。
@@ -126,53 +126,53 @@
 
 | 版本 | Validation PR-AUC | Validation ROC-AUC | Validation Balanced Accuracy | Test PR-AUC | Test ROC-AUC | Test Balanced Accuracy |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| `level1 baseline reference` | 0.1216 | 0.7642 | 0.7132 | 0.1162 | 0.7452 | 0.6999 |
-| `level1 structural conditional increment` | 0.2183 | 0.8822 | 0.8074 | 0.1990 | 0.8732 | 0.8035 |
-| `level1 baseline without n_facilities` | 0.1226 | 0.7613 | 0.7132 | 0.1134 | 0.7435 | 0.7000 |
-| `level1 structural conditional without annual_match_quality_tier` | 0.2110 | 0.8799 | 0.8054 | 0.1891 | 0.8724 | 0.8038 |
+| `第一级样本 baseline reference` | 0.1216 | 0.7642 | 0.7132 | 0.1162 | 0.7452 | 0.6999 |
+| `第一级样本 structural conditional increment` | 0.2183 | 0.8822 | 0.8074 | 0.1990 | 0.8732 | 0.8035 |
+| `第一级样本 baseline without n_facilities` | 0.1226 | 0.7613 | 0.7132 | 0.1134 | 0.7435 | 0.7000 |
+| `第一级样本 structural conditional without annual_match_quality_tier` | 0.2110 | 0.8799 | 0.8054 | 0.1891 | 0.8724 | 0.8038 |
 
 关键观察：
 
-- `anchored` 是本轮 `level1` 主线中提升最强的任务。
-- 相对 `level1 baseline`，`validation PR-AUC` 提升 `+0.0968`，`test PR-AUC` 提升 `+0.0829`。
+- `anchored` 是本轮 `第一级样本` 主线中提升最强的任务。
+- 相对 `第一级样本 baseline`，`validation PR-AUC` 提升 `+0.0968`，`test PR-AUC` 提升 `+0.0829`。
 - 去掉 `annual_match_quality_tier` 后，结果仍明显高于 baseline，说明主要增益来自更基础的结构/覆盖计数特征。
 - `annual_match_quality_tier` 仍提供额外帮助，尤其在 `PR-AUC` 上有一致增益，但它不是全部提升来源。
 
-### 5.2 `level2` 补充对照
+### 5.2 `第二级样本` 补充对照
 
 #### `tthm_regulatory_exceedance_prediction`
 
 | 版本 | Validation PR-AUC | Validation ROC-AUC | Validation Balanced Accuracy | Test PR-AUC | Test ROC-AUC | Test Balanced Accuracy |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| `level2 baseline reference` | 0.0652 | 0.7212 | 0.6641 | 0.1039 | 0.7395 | 0.6846 |
-| `level2 structural conditional increment` | 0.0769 | 0.7868 | 0.7310 | 0.1735 | 0.8161 | 0.7481 |
-| `level2 structural conditional without annual_match_quality_tier` | 0.0757 | 0.7820 | 0.7309 | 0.1659 | 0.8127 | 0.7474 |
+| `第二级样本 baseline reference` | 0.0652 | 0.7212 | 0.6641 | 0.1039 | 0.7395 | 0.6846 |
+| `第二级样本 structural conditional increment` | 0.0769 | 0.7868 | 0.7310 | 0.1735 | 0.8161 | 0.7481 |
+| `第二级样本 structural conditional without annual_match_quality_tier` | 0.0757 | 0.7820 | 0.7309 | 0.1659 | 0.8127 | 0.7474 |
 
 #### `tthm_anchored_risk_prediction`
 
 | 版本 | Validation PR-AUC | Validation ROC-AUC | Validation Balanced Accuracy | Test PR-AUC | Test ROC-AUC | Test Balanced Accuracy |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| `level2 baseline reference` | 0.1208 | 0.7681 | 0.7380 | 0.1858 | 0.7816 | 0.7292 |
-| `level2 structural conditional increment` | 0.1852 | 0.8552 | 0.7941 | 0.3436 | 0.8698 | 0.7913 |
-| `level2 structural conditional without annual_match_quality_tier` | 0.1824 | 0.8495 | 0.7877 | 0.3310 | 0.8667 | 0.7831 |
+| `第二级样本 baseline reference` | 0.1208 | 0.7681 | 0.7380 | 0.1858 | 0.7816 | 0.7292 |
+| `第二级样本 structural conditional increment` | 0.1852 | 0.8552 | 0.7941 | 0.3436 | 0.8698 | 0.7913 |
+| `第二级样本 structural conditional without annual_match_quality_tier` | 0.1824 | 0.8495 | 0.7877 | 0.3310 | 0.8667 | 0.7831 |
 
 关键观察：
 
-- `level2` 与 `level1` 的响应方向一致，两条任务都出现清晰正向增益。
-- `level2` test `PR-AUC` 的绝对提升幅度更大，说明结构/覆盖条件特征在高信息子样本中的区分度更强。
-- 但这不能被改写成“`level2` 更代表全国主线”，它仍只是补充对照线。
+- `第二级样本` 与 `第一级样本` 的响应方向一致，两条任务都出现清晰正向增益。
+- `第二级样本` test `PR-AUC` 的绝对提升幅度更大，说明结构/覆盖条件特征在高信息子样本中的区分度更强。
+- 但这不能被改写成“`第二级样本` 更代表全国主线”，它仍只是补充对照线。
 
 ## 6. 与 `V4.1` 至 `V4.4b` 的对照解释
 
 ### 6.1 与 `V4.1 baseline` 的关系
 
-- `V4.1` 的作用是把 `level1 + baseline_default` 固定为第三层全国主线起点。
+- `V4.1` 的作用是把 `第一级样本 + baseline_default` 固定为第三层全国主线起点。
 - `V4.5` 沿用同一主线起点，因此与 `V4.1` 保持了直接可比性。
 - 本轮确认：全国主线不依赖高稀疏化学变量，也能通过结构/覆盖条件特征获得显著预测增强。
 
 ### 6.2 与 `V4.2`、`V4.3`、`V4.4` 的关系
 
-- `V4.2` 至 `V4.4` 的核心对象是 `level2` 上的机制增强顺序验证。
+- `V4.2` 至 `V4.4` 的核心对象是 `第二级样本` 上的机制增强顺序验证。
 - `V4.3` 已说明 `TOC` 是当前最可信的机制增强变量；`V4.4` 已说明 `free_chlorine` 只有弱边际增益；`V4.4b` 已暂停 `total_chlorine` 第三层主线实验。
 - `V4.5` 没有推翻这些判断，而是回答了另一个不同层面的问题：在不继续推进高稀疏化学变量的情况下，全国主线是否还能通过结构/覆盖条件信息得到稳定增强。
 
@@ -184,7 +184,7 @@
 
 ## 7. 对关键问题的回答
 
-### 7.1 在 `level1 baseline` 基础上加入结构/覆盖条件特征后，是否带来稳定提升
+### 7.1 在 `第一级样本 baseline` 基础上加入结构/覆盖条件特征后，是否带来稳定提升
 
 是。两条任务在 validation 与 test 上均呈现明显正向提升，且不是只发生在单一指标或单一切分上的偶然波动。
 
@@ -198,9 +198,9 @@
 
 ### 7.4 `n_facilities_in_master` 是否继续表现为重要结构代理变量
 
-它仍有贡献，但贡献很小。`level1 baseline` 去掉 `n_facilities_in_master` 后，`test PR-AUC` 仅下降约 `0.0020`（regulatory）和 `0.0028`（anchored），说明它不是主导本轮结果的压倒性驱动项。
+它仍有贡献，但贡献很小。`第一级样本 baseline` 去掉 `n_facilities_in_master` 后，`test PR-AUC` 仅下降约 `0.0020`（regulatory）和 `0.0028`（anchored），说明它不是主导本轮结果的压倒性驱动项。
 
-### 7.5 `level1` 与 `level2` 的响应是否一致
+### 7.5 `第一级样本` 与 `第二级样本` 的响应是否一致
 
 一致。两条任务在两个层级上都呈现正向增益，且 `annual_match_quality_tier` 在两个层级上都表现为“小幅但一致的附加贡献”。
 
@@ -221,14 +221,14 @@
 
 - 不能把 `annual_match_quality_tier` 写成环境暴露变量或真实水质变量。
 - 不能把覆盖计数特征带来的增益直接写成 DBP 形成机理发现。
-- 不能因为 `level2` 提升更大，就反向把 `level2` 当作全国主线结论主体。
+- 不能因为 `第二级样本` 提升更大，就反向把 `第二级样本` 当作全国主线结论主体。
 - 不能把“预测上有用”与“机制上可信”混写成同一种结论。
 
 ## 9. 本轮结论与下一步建议
 
 本轮可以明确写出的结论是：
 
-1. `V4.5` 已完成，且结构/覆盖条件特征在第三层 `PWS-year` 全国主线 `level1` 上为两条任务都带来了明显且稳定的预测提升。
+1. `V4.5` 已完成，且结构/覆盖条件特征在第三层 `PWS-year` 全国主线 `第一级样本` 上为两条任务都带来了明显且稳定的预测提升。
 2. 这种提升在 `anchored` 任务上更强，在 `regulatory` 任务上也足够清晰，不属于边际噪声。
 3. 主体增益并不主要来自 `annual_match_quality_tier` 单独一列，而是来自更基础的结构/覆盖计数特征；`annual_match_quality_tier` 只是在此基础上再提供小幅附加收益。
 4. 这些特征值得纳入第三层全国主线正式预测模型，但应被写成“结构/覆盖条件增强”或“风险画像增强”，而不是机制增强。
@@ -237,4 +237,4 @@
 
 1. 先收束第三层全国主线的阶段性结论，把 `baseline`、`TOC`、`free_chlorine`、`total_chlorine readiness audit` 和 `V4.5 structural conditional` 的边界统一写清
 2. 把 treatment summary features increment 作为可选后续补充实验，而不是默认立刻进入的主线步骤
-3. 若后续仍继续推进 treatment summary features，必须继续保留 `level1 baseline reference`、结构/覆盖条件对照链与解释边界，避免把多个代理层混写成机制层
+3. 若后续仍继续推进 treatment summary features，必须继续保留 `第一级样本 baseline reference`、结构/覆盖条件对照链与解释边界，避免把多个代理层混写成机制层

@@ -13,9 +13,9 @@
 
 - 行数：`259500`
 - 字段数：`38`
-- `level1` 样本数：`199802`
-- `level2` 样本数：`26975`
-- `level3` 样本数：`6193`
+- `第一级样本` 样本数：`199802`
+- `第二级样本` 样本数：`26975`
+- `第三级样本` 样本数：`6193`
 - `tthm_regulatory_exceed_label=1`：`5618`
 - `tthm_regulatory_exceed_label=0`：`194184`
 - `tthm_warning_label=1`：`19853`
@@ -35,13 +35,14 @@
 - `80 ug/L` 是法规阈值；`60 ug/L` 只是预警阈值，不能写成法规阈值。
 - 当目标变量缺失时，这两个标签均保持为空值，不把缺失样本误写为负类。
 
-## 5. level1 / level2 / level3 规则
+## 5. 第一级样本 / 第二级样本 / 第三级样本 规则
 
-- `level1`：`tthm_sample_weighted_mean_ug_l` 非缺失。
-- `level2`：满足 `level1` 且 `n_core_vars_available >= 2`。
-- `level3`：满足 `level1` 且 `n_core_vars_available >= 3`。
-- 始终满足“`level3` 包含于 `level2`，`level2` 包含于 `level1`”。
+- `第一级样本`：`tthm_sample_weighted_mean_ug_l` 非缺失。
+- `第二级样本`：满足 `第一级样本` 且 `n_core_vars_available >= 2`。
+- `第三级样本`：满足 `第一级样本` 且 `n_core_vars_available >= 3`。
+- 始终满足“`第三级样本` 包含于 `第二级样本`，`第二级样本` 包含于 `第一级样本`”。
 - `TTHM + 4 个核心变量全齐` 的 `60` 条记录仍只作为补充检查，不单独定义为新的正式 level。
+- 为避免与第一章“第一层 / 第二层 / 第三层”数据层级混淆，文档中统一使用“第一级样本 / 第二级样本 / 第三级样本”指代第三层 `PWS-year` 内部样本分层；内部字段名仍保持为 `level1_flag`、`level2_flag`、`level3_flag` 与 `ml_level_max`。
 
 ## 6. 保留字段口径
 

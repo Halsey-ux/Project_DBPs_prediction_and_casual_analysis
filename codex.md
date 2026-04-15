@@ -24,13 +24,13 @@
 
 ## 3. 当前阶段目标
 
-当前阶段目标已经从单条第三层主线增量验证，推进到“基于不同信息通路的 DBP 高风险场景分层预测框架”梳理与 `V4.7` 探索性扩展阶段：
+当前阶段目标已经从单条第三层主线增量验证，完成 `V5.5` 候选信息通路 readiness audit，并推进到 `V5.6` 主筛查模型准入测试设计与输入组冻结准备阶段：
 
 - 将当前第三层正式主线重新表述为“基于美国 SYR4 的全国尺度 DBP 高风险场景正式主模型”，而不直接表述为通用全球模型
 - 固定系统背景通路的当前正式版本，即第三层 `第一级样本` 上的 `baseline + structural + treatment`
 - 固定水质特征通路的当前版本，即第三层 `PWS-year` 内部第二级样本上的 `baseline + pH + alkalinity + TOC`
 - 将上述两条信息通路整合为同一分层预测框架中的互补部分，用于分别承担广覆盖风险识别与高信息水质增强预测/机制支撑
-- 在不改变当前正式主模型定位的前提下，以 `V4.7` 探索性检验两条信息通路的特征合并后是否形成更强的大模型
+- 在不改变当前正式主模型定位的前提下，基于 `V5.5` 审计结果明确哪些候选通路具备覆盖率、标签重叠、可获得性和泄露边界上的后续准入基础
 - 将项目总目标进一步明确为：不是追求单一万能模型，而是构建一个可在不同信息完整度下工作的分层预测框架
 - 明确接受监管数据中的制度性缺失、变量覆盖不均衡与时空异质性是现实约束，并将其纳入框架设计而非视为异常噪音
 - 继续区分“全国主线风险画像增强”“工程背景辅助增强”“水质增强预测”与“环境机制增强”的解释边界
@@ -75,6 +75,9 @@ D:\Project_DBPs_prediction_and_casual_analysis
 - `data_local/V4_Chapter1_Part1_Experiments/`
   - V4 实验结果目录
   - 当前已按版本分层写入 `V4_3/tthm_regulatory_exceedance_prediction/` 与 `V4_3/tthm_anchored_risk_prediction/`
+- `data_local/V5_Chapter1_Part1_Facility_Month_Module/`
+  - V5 第二层 `facility-month` 模块结果目录
+  - 当前已写入 `V5_0/`、`V5_1/`、`V5_2/` 与 `V5_5/`
 
 各目录作用：
 
@@ -111,6 +114,13 @@ D:\Project_DBPs_prediction_and_casual_analysis
     - `02_v5_0_execution/`：V5.0 执行文档
     - `03_v5_1_prompt/`：V5.1 第二层 baseline 冻结 prompt
     - `04_v5_1_execution/`：V5.1 第二层 baseline 协议、执行报告与结果摘要
+    - `05_v5_2_prompt/`：V5.2 第二层机制核心 stage1 prompt
+    - `06_v5_2_execution/`：V5.2 第二层机制核心 stage1 协议、执行报告与结果摘要
+    - `07_v5_2b_execution/`：V5.2b 第二层样本制度收束、专题分支重定义与后续计划
+    - `08_v5_3_execution/`：V5.3 第二层框架决策支持定义与输入输出示例
+    - `09_v5_4_execution/`：V5.4 候选信息通路审计与框架组装协议
+    - `10_v5_5_prompt/`：V5.5 候选信息通路 readiness audit 的 Codex 执行 prompt
+    - `11_v5_5_execution/`：V5.5 候选信息通路 readiness audit 执行报告
     - `V5_Master_Plan.md`：V5 总体计划
   - `V1_5_Update_Service_Scope_Summary.md`：V1-V5 大版本服务范围说明
 - `scripts/`
@@ -391,47 +401,106 @@ GitHub 不直接管理：
 - 已明确“EPA 监管数据本身不完整”不是削弱框架价值的理由，反而强化了本项目面向真实监管场景建模的现实意义
 - 已明确制度性缺失与变量信息密度不均衡不会否定项目方向，但会决定框架的设计边界、解释边界与正式主模型的变量取舍逻辑
 - 已明确当前最稳妥的目标不是追求一个在所有缺失模式下都同样最优的单一统一模型，而是建立“广覆盖主模型 + 高信息增强模型 + 探索性整合证据”的框架体系
+- 已新增脚本 `scripts/train_v5_2_facility_month_mechanistic_core_stage1.py`
+- 已完成 `V5.2 facility-month mechanistic core stage1` 正式实验，结果统一写入 `data_local/V5_Chapter1_Part1_Facility_Month_Module/V5_2/`
+- 已新增中文文档 `docs/07_v5/06_v5_2_execution/V5_2_Facility_Month_Mechanistic_Core_Stage1_Protocol.md`
+- 已新增中文文档 `docs/07_v5/06_v5_2_execution/V5_2_Facility_Month_Mechanistic_Core_Stage1_Execution_Report.md`
+- 已新增中文文档 `docs/07_v5/06_v5_2_execution/V5_2_Facility_Month_Mechanistic_Core_Stage1_Result_Summary.md`
+- 已确认 `V5.2` 与 `V5.1 baseline_core_minimal_stage1_reference` 使用完全同一批 `facility-month` complete-case 样本：train `2,073`、validation `362`、test `203`
+- 已确认 `baseline_core_minimal + pH + alkalinity` 在 `test` 上相对同子样本 baseline 带来一致增益：`PR-AUC +0.0294`、`ROC-AUC +0.0215`、`balanced_accuracy +0.0090`
+- 已确认 `baseline_core_minimal + pH + alkalinity` 在 `validation` 上仅 `ROC-AUC` 与 `balanced_accuracy` 轻微改善，而 `PR-AUC` 从 `0.0935` 下降到 `0.0865`，因此当前证据仍不足以写成“稳定增益”
+- 已明确 `V5.2` 的最稳妥结论是：第二层当前具备有限、弱正向的第一轮正式机制支撑证据，但仍不应被写成已经成熟的第二层增强主链
+- 已明确 `TOC` 仍可保留为第二层 reduced dataset 专题候选，但不能再被默认写成 `V5.2` 之后的线性主链下一步
+- 已新增文档 `docs/07_v5/07_v5_2b_execution/V5_2b_Facility_Month_Sample_Framework_And_Boundary_Summary.md`
+- 已新增文档 `docs/07_v5/07_v5_2b_execution/V5_3_TOC_Reduced_Dataset_Branch_Design.md`
+- 已新增文档 `docs/07_v5/07_v5_2b_execution/V5_2b_Facility_Month_Follow_Up_Action_Plan.md`
+- 已在 `V5_Master_Plan.md` 中正式补入 `V5.2b`，用于收束第二层样本制度、模块边界与 `V5.3` 专题分支定义
+- 已明确 `V5` 当前尚未形成 `V4` 式正式三级样本制度，而是更适合维持“正式任务样本池 + 专题 complete-case 子样本池”的双层制度
+- 已明确 `V5.0` 的 `match_quality_tier` 当前只能解释为第二层信息密度审计标签，不能直接等价写成 `V4` 式正式训练样本等级
+- 已明确 `V5.3` 当前应重定义为 `TOC reduced dataset` 专题分支，而不是第二层正式主链的默认线性下一步
+- 已新增文档 `docs/07_v5/08_v5_3_execution/V5_3_Framework_Decision_Support_Definition.md`
+- 已新增文档 `docs/07_v5/08_v5_3_execution/V5_3_Framework_Input_Output_Examples.md`
+- 已正式将 `V5.3` 更新为框架决策支持定义轮，用于固定整个分层框架的现实问题、输入输出逻辑和使用场景
+- 已明确该框架的主价值不是重复完整监管结果，而是在不完整监管数据条件下进行风险筛查、优先级排序与局部证据整合
+- 已明确第三层 `PWS-year` 应固定为广覆盖主筛查层，第二层 `facility-month` 应固定为局部场景支撑层
+- 已明确面向环保局和水厂的最终输出不应只是单一高风险标签，而应包括综合风险等级、证据来源与建议动作
+- 已将 `TOC reduced dataset` 从 `V5.3` 的默认主题下沉为后续专题子分支候选
+- 已新增文档 `docs/07_v5/08_v5_3_execution/V5_3_Overall_Research_Framework_Status_And_Next_Steps.md`
+- 已将当前整体课题思路总结为：基于 `SYR4` 真实监管数据，构建一个在信息不完整条件下生成多层级高风险证据、并服务于优先级排序、重点复核和补充监测决策的分层风险支持框架
+- 已明确已完成工作在整体目标中的位置：数据基础与层级设计、第三层广覆盖主筛查线、第二层局部支撑线、框架语义与决策支持定义
+- 已明确下一步优先级：先定义风险证据整合层输出规则，再决定是否启动 `TOC reduced dataset` 专题审计，随后再设计因果分析后续嵌套模块
+- 已新增文档 `docs/07_v5/09_v5_4_execution/V5_4_Candidate_Pathway_Audit_And_Framework_Assembly_Protocol.md`
+- 已正式将 `V5.4` 定义为候选信息通路审计与框架组装协议轮，用于固定通路准入、通路分级、模型组装、泄露控制和三层框架组织规则
+- 已明确后续 V5 更新应按协议逐条审计候选通路，而不是直接把每个通路机械训练成独立模型或简单投票
+- 已在 `V5_Master_Plan.md` 中补充 `V5.4` 协议定位与 `V5.5+` 候选通路逐条审计计划
+- 已新增文档 `docs/07_v5/10_v5_5_prompt/V5_5_Candidate_Pathway_Readiness_Audit_Codex_Prompt.md`
+- 已将 `V5.5` 的下一轮执行任务定义为候选信息通路 readiness audit，用于把 `V5.4` 协议落地为字段清单、覆盖率、标签重叠、泄露风险和框架角色判定表
+- 已新增脚本 `scripts/audit_v5_5_candidate_pathway_readiness.py`
+- 已完成 `V5.5 candidate pathway readiness audit`，结果统一写入 `data_local/V5_Chapter1_Part1_Facility_Month_Module/V5_5/`
+- 已新增中文执行报告 `docs/07_v5/11_v5_5_execution/V5_5_Candidate_Pathway_Readiness_Audit_Report.md`
+- 已确认当前 `V3_pws_year_master.csv` 为 `0` 字节，本轮未原位修改该文件，而是从 `V3_facility_month_master.csv` 按 `pwsid + year` 临时上卷形成第三层审计视图
+- 已确认 `PWS-year` 结构背景通路和设施复杂度通路覆盖率均为 `100.00%`，与 `TTHM` 标签重叠率均为 `76.99%`，与 `HAA5` 标签重叠率均为 `63.73%`，适合优先进入后续主筛查模型准入测试
+- 已确认 `PWS-year` 酸碱与缓冲条件通路覆盖率为 `39.18%`，与 `TTHM` 标签重叠率为 `18.97%`，与 `HAA5` 标签重叠率为 `16.62%`，适合作为优先可选机制证据模块候选
+- 已确认 NOM/有机前体物通路和消毒剂与残余消毒剂通路机制意义较强，但标签重叠率和时序边界不足，当前更适合作为专题审计或可选机制模块，不应直接进入广覆盖主模型
+- 已确认监测覆盖度与证据质量通路应进入证据质量模块，不能解释为导致 DBP 高风险的化学机制因素
+- 已新增脚本 `scripts/recover_v3_pws_year_master_from_facility_month.py`
+- 已完成 `V3_pws_year_master.csv` 受控恢复：从未损坏的 `V3_facility_month_master.csv` 复用原始 V3 年度聚合逻辑重建第三层主表
+- 已将原 `0` 字节异常文件备份为本地文件 `data_local/V3_Chapter1_Part1_Prototype_Build/V3_pws_year_master.zero_byte_20260401_091846.csv`
+- 已生成本地校验报告 `data_local/V3_Chapter1_Part1_Prototype_Build/V3_pws_year_master_recovery_validation.json`
+- 已新增恢复记录文档 `docs/04_v3/V3_PWS_Year_Master_Recovery_Note.md`
+- 已确认恢复后的 `V3_pws_year_master.csv` 行数 `259,500`、字段数 `130`、主键重复数 `0`，并与历史 V3 关键统计一致
+- 已确认使用恢复后的 `V3_pws_year_master.csv` 临时生成的 V4 `ml_ready` 与现有 `V4_pws_year_ml_ready.csv` 逐列逐行一致
+- 已在恢复后重新运行 `scripts/audit_v5_5_candidate_pathway_readiness.py`，当前 V5.5 本地审计输出已读取正式恢复后的 `V3_pws_year_master.csv`
+- 已更新 `docs/07_v5/11_v5_5_execution/V5_5_Candidate_Pathway_Readiness_Audit_Report.md`，说明初次临时上卷口径与恢复后正式主表重跑状态
+- 已检索 `docs/06_v4/` 下 V4 阶段所有相关文档，确认恢复后的 `V3_pws_year_master.csv` 可派生出与 V4 文档记录一致的样本层级、正类数量和 treatment 覆盖统计
+- 已在 `docs/04_v3/V3_PWS_Year_Master_Recovery_Note.md` 中补充 V4 文档交叉校验结果
+- 已新增脚本 `scripts/audit_local_project_data_integrity.py`
+- 已完成本地项目数据完整性审计，生成报告 `docs/00_overview/Local_Project_Data_Integrity_Audit_Report_2026_04_15.md`
+- 已确认 `data_local/` 共检查 `167` 个文件，三个关键本地数据集 `V3_facility_month_master.csv`、`V3_pws_year_master.csv`、`V4_pws_year_ml_ready.csv` 均通过预期行数和字段数校验
+- 已确认当前正式业务数据未发现新的 0 字节损坏文件；唯一 0 字节文件为已保留的事故证据备份 `V3_pws_year_master.zero_byte_20260401_091846.csv`
+- 已确认原始 CSV 数据目录 `D:\Syr4_Project\syr4_DATA_CSV` 存在且未发现 0 字节文件；历史记录中的 `D:\SYR4_Data\syr4_DATA_excel` 当前不存在，需视为非当前可用输入路径
+- 已再次确认 `data_local/` 大型本地数据和原始 SYR4 数据不应直接提交到 GitHub，GitHub 仅建议备份脚本、文档、配置、数据字典和轻量审计报告
 
 ## 9. 最近一次更新
 
-最后更新时间：2026-04-08 21:11（Asia/Hong_Kong）
+最后更新时间：2026-04-15 10:42（Asia/Hong_Kong）
 
 最近更新内容：
 
-- 已完成 `V5.1` 真正第二层 `facility-month baseline freeze`
-- 已新增 `scripts/io_v5_facility_month.py`
-- 已新增 `scripts/build_v5_1_facility_month_splits.py`
-- 已新增 `scripts/v5_facility_month_training_common.py`
-- 已新增 `scripts/train_v5_1_facility_month_baseline.py`
-- 已在 `data_local/V5_Chapter1_Part1_Facility_Month_Module/V5_1/` 下输出正式切分文件、切分策略比较文件、baseline 特征集登记表与 baseline 实验结果表
-- 已正式固定第二层 `V5.1` 的任务为 `tthm_high_risk_month_prediction`，标签为 `is_tthm_high_risk_month`
-- 已正式固定第二层 `V5.1` 的主切分为 `group_by_pwsid`
-- 已正式固定第二层 `V5.1` 的第一版 baseline 为 `month + state_code + system_type + source_water_type + retail_population_served + adjusted_total_population_served`
-- 已确认 `has_treatment_summary` 不进入第一版正式 baseline，只保留为条件性对照字段
-- 已确认 `water_facility_type` 不进入第一版正式 baseline，只保留为条件性对照字段
-- 已确认 detailed treatment flags 全部排除在第一版正式 baseline 外
-- 已完成 `baseline_core_minimal_stage1_reference`，为 `V5.2 baseline + pH + alkalinity` 提供同子样本 baseline 对照
-- 已新增 `docs/07_v5/04_v5_1_execution/V5_1_Facility_Month_Baseline_Protocol.md`
-- 已新增 `docs/07_v5/04_v5_1_execution/V5_1_Facility_Month_Baseline_Execution_Report.md`
-- 已新增 `docs/07_v5/04_v5_1_execution/V5_1_Facility_Month_Baseline_Result_Summary.md`
+- 已完成 `V3_pws_year_master.csv` 受控恢复，恢复来源为未损坏的 `V3_facility_month_master.csv` 和原始 V3 年度聚合逻辑
+- 已新增恢复脚本 `scripts/recover_v3_pws_year_master_from_facility_month.py`
+- 已新增恢复记录文档 `docs/04_v3/V3_PWS_Year_Master_Recovery_Note.md`
+- 已确认恢复后的 V3 第三层主表与历史 V3 关键统计一致：行数 `259,500`、字段数 `130`、主键重复数 `0`、`TTHM` 系统-年份单元 `199,802`、`HAA5` 系统-年份单元 `165,379`
+- 已确认恢复后的第三层主表可临时生成与现有正式 `V4_pws_year_ml_ready.csv` 逐列逐行一致的 V4 `ml_ready` 数据
+- 已恢复后重跑 V5.5 readiness audit，当前审计输出已统一使用正式恢复后的 `V3_pws_year_master.csv`
+- 已补齐 V5.5 中文执行报告 `docs/07_v5/11_v5_5_execution/V5_5_Candidate_Pathway_Readiness_Audit_Report.md`
+- 已确认 V5.5 复跑脚本读取正式 `V3_pws_year_master.csv`，第三层 `PWS-year` 行数为 `259,500`，第二层 `facility-month` 行数为 `1,442,728`
+- 已确认 `PWS-year` 结构背景通路与设施复杂度通路优先进入后续主筛查模型准入测试，酸碱与缓冲条件通路进入可选机制证据模块准入测试
+- 已完成 V4 文档交叉校验，确认恢复后的第三层主表与 V4 阶段记录的 `V4_pws_year_ml_ready.csv` 总行数、三级样本数量、正类数量和 treatment 覆盖统计一致
+- 已完成本地项目数据完整性审计，并新增中文报告 `docs/00_overview/Local_Project_Data_Integrity_Audit_Report_2026_04_15.md`
+- 已确认三个关键本地数据集通过预期行列数校验，当前没有发现新的正式业务数据损坏文件
+- 已明确不建议把 `data_local/` 大型本地数据直接 Git 提交，建议提交本轮新增脚本、文档、恢复记录和轻量审计报告作为 GitHub 备份
+- 已同步更新 `codex.md`
 
 对应提交：
 
-- 最近已推送提交：`efc5061`（`feat: complete V4.6 pws-year treatment summary increment experiments`）
-- 本次 `V5.0` 审计脚本、本地摘要结果、`V5_Master_Plan.md`、`V5.1` baseline 冻结脚本、`V5.1` 本地结果、执行文档与 `codex.md` 更新尚未提交，待用户确认是否执行 Git 提交与推送
+- 最近已推送提交：`9c02e79`（`feat: freeze V5.1 facility-month baseline protocol and experiments`）
+- 本次提交信息：`feat: complete V5 pathway audits and recovery docs`
+- 本次提交范围包括 `V5.2`、`V5.2b`、`V5.3`、`V5.4`、`V5.5`、`V3_pws_year_master` 恢复、本地数据完整性审计文档、相关脚本和 `codex.md` 更新
 
 ## 10. 下一步任务
 
 下一步最具体的工作是：
 
-- 基于已经固定的 `V5.1` 协议正式启动 `V5.2`，优先测试 `baseline_core_minimal + pH + alkalinity`
-- 在 `V5.2` 中严格沿用 `V5.1` 已冻结的标签口径、切分口径与 `baseline_core_minimal_stage1_reference`
-- 在 `V5.2` 完成前，暂停把 `TOC`、`free_chlorine` 与 `total_chlorine` 当作第二层正式主链默认下一步
-- 如需保留 `TOC`，应在 `V5.2` 后将其改写为第二层 reduced dataset 专题分支，而不是直接沿用原始 `V5.3` 线性计划
-- 将第二层当前角色继续固定为“机制支撑线为主、有限高信息增强为辅”，避免误写成已成熟的第二层宽表模型
-- 继续统一项目文档与论文写法中的主线表述，明确第二层 `facility-month` 与第三层内部第二级样本不是同一对象
-- 将跨州、跨年份、跨系统类型的外推验证整理为后续“泛化性审计模块”，放在当前框架表述固定之后推进
-- 暂不进入树模型与超参数优化，先把第二层 baseline 边界、`V5.2` 机制核心链和整体框架角色分工固定清楚
+- 启动 `V5.6 Main Screening Admission Test Design And Feature Set Freeze`
+- `V5.5` 审计已在恢复后重新运行；后续如继续修改 V5.5 脚本或通路定义，应继续使用恢复后的正式 `V3_pws_year_master.csv`
+- 若用户确认执行 Git 备份，应仅提交脚本、文档、配置和轻量审计报告，不提交 `data_local/` 大型本地数据、原始 SYR4 数据、`scratch/` 或事故 0 字节备份文件
+- 基于 `V5.5` readiness audit 冻结第一轮主筛查候选输入组，优先包括 `PWS-year` 结构背景通路、设施复杂度通路和可审计处理工艺摘要
+- 明确酸碱与缓冲条件通路进入可选机制证据模块的准入测试口径，并避免把第二层 `facility-month` 与第三层 `PWS-year` 内部样本等级混写
+- 对 NOM/有机前体物通路和消毒剂与残余消毒剂通路继续做专题覆盖率、时序和标签重叠审计，不直接纳入广覆盖主模型
+- 继续保留本地 `V3_pws_year_master.zero_byte_20260401_091846.csv` 和恢复校验 JSON 作为事故记录，不纳入 GitHub
+- 继续禁止同周期同目标 DBP 结果字段、单项组分、合规与纠正行动类变量作为前置预测输入
+- 暂不进入树模型、超参数优化或多模型简单投票，先完成模型准入输入组冻结和泄露边界固化
 
 ## 11. 当前框架判断
 
@@ -449,6 +518,10 @@ GitHub 不直接管理：
 - 因此当前框架下，两条信息通路更适合被视为互补部分，而不是必须二选一保留的竞争模型
 - `V4.7` 的最稳妥定位仍是高信息样本中的探索性整合证据，而不是新的全国正式主模型结论
 - 当前最稳妥的总体表述是：本项目正在基于美国 `SYR4` 数据，构建一个能够在不完整且时空异质的监管数据条件下运行的 DBP 高风险场景分层预测框架原型，其中全国正式主模型、高信息增强模型与探索性整合证据分别承担不同角色
+- `V5.4` 已进一步明确：后续通路筛选应先按机制解释、覆盖率、标签重叠覆盖率、应用可获得性、泄露风险、增量价值、稳定性和决策可解释性进行准入审计，再决定是否进入正式框架
+- 当前框架不应被实现为多个通路模型的简单平均或投票，而应组织为“广覆盖主筛查模型 + 可选机制证据模块 + 证据整合与行动建议层”
+- 监测覆盖度和数据质量变量应优先服务于证据等级、完整性和可信度判断，而不应被直接解释为导致 DBP 高风险的化学机制因素
+- 同周期同目标家族的 DBP 结果变量和组分变量不得作为预测输入；单项 DBP、合规、纠正行动等信息只有在用途、时间顺序和泄露边界清楚后，才能进入解释或后续专题模块
 
 ---
 

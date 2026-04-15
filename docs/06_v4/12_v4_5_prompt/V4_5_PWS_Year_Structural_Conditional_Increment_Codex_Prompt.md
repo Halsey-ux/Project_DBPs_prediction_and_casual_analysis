@@ -27,10 +27,10 @@
 
 在开始 `V4.5` 之前，你必须接受并沿用以下已确认结论：
 
-1. `V4.1` 已确认：`level1 + baseline_default` 可以作为第三层全国主线起点。
-2. `V4.2` 已确认：在 `level2` 上加入 `pH + alkalinity + missing flags` 后，两条任务线都相对 baseline 获得稳定提升。
+1. `V4.1` 已确认：`第一级样本 + baseline_default` 可以作为第三层全国主线起点。
+2. `V4.2` 已确认：在 `第二级样本` 上加入 `pH + alkalinity + missing flags` 后，两条任务线都相对 baseline 获得稳定提升。
 3. `V4.3` 已确认：`TOC` 是当前第三层主线上最可信的机制增强变量，尤其在 `anchored` 任务上增益明显。
-4. `V4.4` 已确认：`free_chlorine` 在 full `level2` 上只带来弱边际增益，且无法稳健拆分数值信号、缺失模式信号与样本选择效应。
+4. `V4.4` 已确认：`free_chlorine` 在 full `第二级样本` 上只带来弱边际增益，且无法稳健拆分数值信号、缺失模式信号与样本选择效应。
 5. `V4.4b` 已确认：`total_chlorine` 当前不具备继续进入第三层正式增量实验的条件。
 6. 因此，`V4.5` 的自然下一步不是继续推进高稀疏化学变量，而是检验 `PWS-year` 层级的结构/覆盖条件特征，看看全国主线还能否在不依赖极稀疏变量的情况下获得更稳健提升。
 
@@ -57,11 +57,11 @@
 - 即便它们带来预测增益，也不能直接解释为环境机制发现
 - 文档中必须明确区分“预测价值”和“机制意义”
 
-### 3.3 `level1` 与 `level2` 的角色需要重新拉开
+### 3.3 `第一级样本` 与 `第二级样本` 的角色需要重新拉开
 
-- 到目前为止，增强实验大多集中在 `level2`
-- 但第三层真正的全国主线应优先回到 `level1`
-- 因此 `V4.5` 应优先围绕 `level1` 正式主线展开，并在必要时补充 `level2` 对照，避免继续把高信息样本结果误写成全国主结论
+- 到目前为止，增强实验大多集中在 `第二级样本`
+- 但第三层真正的全国主线应优先回到 `第一级样本`
+- 因此 `V4.5` 应优先围绕 `第一级样本` 正式主线展开，并在必要时补充 `第二级样本` 对照，避免继续把高信息样本结果误写成全国主结论
 
 ### 3.4 主指标与辅助指标规则继续沿用
 
@@ -95,9 +95,9 @@
 
 本轮主实验优先固定为：
 
-- `level1`
+- `第一级样本`
 
-如有必要，可补一个 `level2` 对照版本，但不得让 `level2` 重新替代全国主线。
+如有必要，可补一个 `第二级样本` 对照版本，但不得让 `第二级样本` 重新替代全国主线。
 
 ### 5.3 本轮主特征组
 
@@ -125,11 +125,11 @@
 
 `V4.5` 的核心风险不是跑不出结果，而是把结构代理变量的贡献误写成环境机制提升。因此本轮至少必须保留以下 5 组版本：
 
-### 6.1 `level1 baseline reference`
+### 6.1 `第一级样本 baseline reference`
 
 定义：
 
-- 样本：全部 `level1`
+- 样本：全部 `第一级样本`
 - 特征：仅 baseline 4 个特征
 
 作用：
@@ -137,22 +137,22 @@
 - 作为第三层全国主线最基础参照
 - 保证可与 `V4.1` 连续比较
 
-### 6.2 `level1 structural conditional increment`
+### 6.2 `第一级样本 structural conditional increment`
 
 定义：
 
-- 样本：全部 `level1`
+- 样本：全部 `第一级样本`
 - 特征：`baseline + structural conditional features`
 
 作用：
 
 - 回答结构/覆盖条件特征是否能在全国主线上带来额外预测信息
 
-### 6.3 `level1 baseline without n_facilities`
+### 6.3 `第一级样本 baseline without n_facilities`
 
 定义：
 
-- 样本：全部 `level1`
+- 样本：全部 `第一级样本`
 - 特征：`baseline` 去掉 `n_facilities_in_master`
 
 作用：
@@ -160,11 +160,11 @@
 - 继续跟踪 `n_facilities_in_master` 作为结构代理特征的贡献边界
 - 防止后续把 `structural conditional increment` 的增益都误归因到单个结构计数字段
 
-### 6.4 `level1 structural conditional without annual_match_quality_tier`
+### 6.4 `第一级样本 structural conditional without annual_match_quality_tier`
 
 定义：
 
-- 样本：全部 `level1`
+- 样本：全部 `第一级样本`
 - 特征：`baseline + months_* + n_core_vars_available`，但不加入 `annual_match_quality_tier`
 
 作用：
@@ -172,27 +172,27 @@
 - 分开观察“年度质量分层标签”与“纯覆盖计数特征”各自的贡献
 - 避免把标签化摘要变量和原始计数特征混在一起解释
 
-### 6.5 `level2 structural conditional reference`（可选但推荐）
+### 6.5 `第二级样本 structural conditional reference`（可选但推荐）
 
 定义：
 
-- 样本：全部 `level2`
-- 特征：与 `level1 structural conditional increment` 相同
+- 样本：全部 `第二级样本`
+- 特征：与 `第一级样本 structural conditional increment` 相同
 
 作用：
 
 - 用于对比高信息样本与全国主样本下，结构条件特征的增益是否一致
-- 但只作为补充解释线，不取代 `level1` 主结果
+- 但只作为补充解释线，不取代 `第一级样本` 主结果
 
 ## 7. 本轮需要回答的核心问题
 
 完成本轮后，至少要回答以下问题：
 
-1. 在 `level1 baseline` 基础上加入结构/覆盖条件特征后，是否带来稳定提升？
+1. 在 `第一级样本 baseline` 基础上加入结构/覆盖条件特征后，是否带来稳定提升？
 2. 这种提升主要体现在 `regulatory` 还是 `anchored` 任务上？
 3. 提升是否主要由 `annual_match_quality_tier` 带动，还是来自更基础的覆盖计数特征？
 4. `n_facilities_in_master` 是否继续表现为重要结构代理变量？
-5. `level1` 与 `level2` 对同一组结构条件特征的响应是否一致？
+5. `第一级样本` 与 `第二级样本` 对同一组结构条件特征的响应是否一致？
 6. 当前结果是否支持把结构/覆盖条件特征纳入全国主线正式模型，还是只适合作为解释辅助线？
 
 ## 8. 缺失处理要求
@@ -235,7 +235,7 @@
 1. 重新把高稀疏变量（如 `DOC`、`SUVA`、`UV254`、`chloramine`）直接塞进第三层正式实验
 2. 在本轮中同时切换树模型、boosting 或超参数优化
 3. 把结构/覆盖特征带来的提升写成环境机制发现
-4. 把 `level2` 结果重新写成全国主线主结论
+4. 把 `第二级样本` 结果重新写成全国主线主结论
 5. 跳过 `baseline reference`，直接只比较增强版本
 6. 混淆 `annual_match_quality_tier` 与真实环境质量变量
 
@@ -249,7 +249,7 @@
 - `scripts/train_v4_tthm_anchored_l1_structural_conditional_increment.py`
 - 如有必要，可扩展 `scripts/v4_tthm_training_common.py`
 
-如补充 `level2` 对照，也可新增对应脚本，但应保持命名清晰。
+如补充 `第二级样本` 对照，也可新增对应脚本，但应保持命名清晰。
 
 ### 11.2 本地结果目录
 
@@ -262,7 +262,7 @@
 
 文件名应尽量明确体现：
 
-- `level1`
+- `第一级样本`
 - `structural_conditional_increment`
 - `logistic_regression`
 
@@ -298,7 +298,7 @@
 3. 向用户汇报：
    - `V4.5` 是否完成
    - 主实验结果
-   - `level1` 与 `level2` 是否出现明显差异
+   - `第一级样本` 与 `第二级样本` 是否出现明显差异
    - 是否建议进入下一轮 treatment summary increment 或收束第三层主线
 4. 最后询问用户是否执行 Git 提交与推送
 

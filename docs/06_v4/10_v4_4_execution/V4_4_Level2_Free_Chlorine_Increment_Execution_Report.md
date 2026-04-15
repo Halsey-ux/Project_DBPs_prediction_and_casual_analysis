@@ -12,7 +12,7 @@
 
 ## 1. 本轮任务定义
 
-本轮执行的是 `V4.4 level2 free_chlorine increment`。目标不是切换模型，不是提前做树模型或超参数优化，而是在 `V4.3 level2 TOC increment` 的底座上检验：
+本轮执行的是 `V4.4 第二级样本 free_chlorine increment`。目标不是切换模型，不是提前做树模型或超参数优化，而是在 `V4.3 第二级样本 TOC increment` 的底座上检验：
 
 - 在 `baseline + pH + alkalinity + TOC + missing flags` 之外，`free_chlorine + free_chlorine_missing_flag` 是否还能继续提供边际预测信息
 - 这一增益更像来自 `free_chlorine` 数值本身，还是更像来自 `free_chlorine_missing_flag` 与样本筛选效应
@@ -29,9 +29,9 @@
 
 ### 2.2 样本层级
 
-- 主实验固定为 `level2`
-- 不把 `level1` 当作本轮主增强层级
-- 不把 `level3` 当作本轮主实验层级
+- 主实验固定为 `第二级样本`
+- 不把 `第一级样本` 当作本轮主增强层级
+- 不把 `第三级样本` 当作本轮主实验层级
 
 ### 2.3 本轮主特征组
 
@@ -60,13 +60,13 @@
 
 本轮对每个任务保留以下版本：
 
-1. `level2 baseline reference`
-2. `level2 mechanistic stage1 reference`
-3. `level2 TOC increment reference`
-4. `level2 free_chlorine increment`
-5. `level2 complete-case TOC increment reference`
-6. `level2 complete-case free_chlorine increment`
-7. `level2 complete-case free_chlorine increment no missing flags`
+1. `第二级样本 baseline reference`
+2. `第二级样本 mechanistic stage1 reference`
+3. `第二级样本 TOC increment reference`
+4. `第二级样本 free_chlorine increment`
+5. `第二级样本 complete-case TOC increment reference`
+6. `第二级样本 complete-case free_chlorine increment`
+7. `第二级样本 complete-case free_chlorine increment no missing flags`
 
 此外，沿用一个轻量敏感性检查：
 
@@ -74,13 +74,13 @@
 
 ### 3.2 缺失处理规则
 
-- 主实验版本：保留全部 `level2` 样本，对数值变量做中位数填补，并显式保留 `ph_missing_flag`、`alkalinity_missing_flag`、`toc_missing_flag`、`free_chlorine_missing_flag`
+- 主实验版本：保留全部 `第二级样本` 样本，对数值变量做中位数填补，并显式保留 `ph_missing_flag`、`alkalinity_missing_flag`、`toc_missing_flag`、`free_chlorine_missing_flag`
 - complete-case 版本：仅保留 `pH + alkalinity + TOC + free_chlorine` 同时非缺失的样本，再分别运行 TOC increment reference 与 free_chlorine increment
 - no-missing-flags 敏感性版本：在与 complete-case free_chlorine increment 完全相同的样本上，删除四列 missing flags
 
 ### 3.3 本轮新增的容错处理
 
-`free_chlorine` 在 `level2` 中缺失极重。为了避免 complete-case 版本因为切分后只剩单一类别而直接报错，本轮扩展了 `scripts/v4_tthm_training_common.py`：
+`free_chlorine` 在 `第二级样本` 中缺失极重。为了避免 complete-case 版本因为切分后只剩单一类别而直接报错，本轮扩展了 `scripts/v4_tthm_training_common.py`：
 
 - 当 validation 或 test split 只有单一类别时，保留可计算指标，并把 `PR-AUC` / `ROC-AUC` 记为 `NA`
 - 当 train split 只有单一类别时，不强行训练模型，而是在结果表中保留样本规模、类别计数与 `not_run_due_to_single_class_train_split` 说明
@@ -93,20 +93,20 @@
 
 #### `tthm_regulatory_exceedance_prediction`
 
-- `level2` 全样本：train `19,320`，validation `3,761`，test `3,894`
+- `第二级样本` 全样本：train `19,320`，validation `3,761`，test `3,894`
 - `pH + alkalinity + TOC + free_chlorine` complete-case：train `49`，validation `6`，test `5`
 
 #### `tthm_anchored_risk_prediction`
 
-- `level2` 全样本：train `12,589`，validation `2,399`，test `2,513`
+- `第二级样本` 全样本：train `12,589`，validation `2,399`，test `2,513`
 - `pH + alkalinity + TOC + free_chlorine` complete-case：train `22`，validation `4`，test `2`
 
 ### 4.2 `free_chlorine` 可用性
 
-- `regulatory level2`：共 `26,975` 行，其中 `free_chlorine` 仅 `749` 行非缺失，占比约 `2.78%`
-- `anchored level2`：共 `17,501` 行，其中 `free_chlorine` 仅 `540` 行非缺失，占比约 `3.09%`
+- `regulatory 第二级样本`：共 `26,975` 行，其中 `free_chlorine` 仅 `749` 行非缺失，占比约 `2.78%`
+- `anchored 第二级样本`：共 `17,501` 行，其中 `free_chlorine` 仅 `540` 行非缺失，占比约 `3.09%`
 
-这说明 `V4.4` 的核心约束不是模型本身，而是 `free_chlorine` 在 `PWS-year level2` 中的极低覆盖率。
+这说明 `V4.4` 的核心约束不是模型本身，而是 `free_chlorine` 在 `PWS-year 第二级样本` 中的极低覆盖率。
 
 ## 5. 结果总览
 
@@ -114,13 +114,13 @@
 
 | 版本 | 样本说明 | Validation PR-AUC | Validation ROC-AUC | Validation Balanced Accuracy | Test PR-AUC | Test ROC-AUC | Test Balanced Accuracy |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| `level2 baseline reference` | `level2 + baseline` | 0.0652 | 0.7212 | 0.6641 | 0.1039 | 0.7395 | 0.6846 |
-| `level2 mechanistic stage1 reference` | `level2 + pH + alkalinity + missing flags` | 0.0775 | 0.7586 | 0.6956 | 0.1941 | 0.7986 | 0.7020 |
-| `level2 TOC increment reference` | `level2 + TOC + toc_missing_flag` | 0.1138 | 0.8020 | 0.7154 | 0.1877 | 0.8320 | 0.7642 |
-| `level2 free_chlorine increment` | `level2 + free_chlorine + free_chlorine_missing_flag` | 0.1144 | 0.8048 | 0.7149 | 0.1880 | 0.8341 | 0.7687 |
-| `level2 complete-case TOC increment reference` | `pH + alkalinity + TOC + free_chlorine` complete-case，但不加 `free_chlorine` 入模 | `NA` | `NA` | `NA` | `NA` | `NA` | `NA` |
-| `level2 complete-case free_chlorine increment` | 同上样本，加入 `free_chlorine` 入模 | `NA` | `NA` | `NA` | `NA` | `NA` | `NA` |
-| `level2 complete-case free_chlorine increment no missing flags` | 同上样本，删除四列 missing flags | `NA` | `NA` | `NA` | `NA` | `NA` | `NA` |
+| `第二级样本 baseline reference` | `第二级样本 + baseline` | 0.0652 | 0.7212 | 0.6641 | 0.1039 | 0.7395 | 0.6846 |
+| `第二级样本 mechanistic stage1 reference` | `第二级样本 + pH + alkalinity + missing flags` | 0.0775 | 0.7586 | 0.6956 | 0.1941 | 0.7986 | 0.7020 |
+| `第二级样本 TOC increment reference` | `第二级样本 + TOC + toc_missing_flag` | 0.1138 | 0.8020 | 0.7154 | 0.1877 | 0.8320 | 0.7642 |
+| `第二级样本 free_chlorine increment` | `第二级样本 + free_chlorine + free_chlorine_missing_flag` | 0.1144 | 0.8048 | 0.7149 | 0.1880 | 0.8341 | 0.7687 |
+| `第二级样本 complete-case TOC increment reference` | `pH + alkalinity + TOC + free_chlorine` complete-case，但不加 `free_chlorine` 入模 | `NA` | `NA` | `NA` | `NA` | `NA` | `NA` |
+| `第二级样本 complete-case free_chlorine increment` | 同上样本，加入 `free_chlorine` 入模 | `NA` | `NA` | `NA` | `NA` | `NA` | `NA` |
+| `第二级样本 complete-case free_chlorine increment no missing flags` | 同上样本，删除四列 missing flags | `NA` | `NA` | `NA` | `NA` | `NA` | `NA` |
 
 关键观察：
 
@@ -132,13 +132,13 @@
 
 | 版本 | 样本说明 | Validation PR-AUC | Validation ROC-AUC | Validation Balanced Accuracy | Test PR-AUC | Test ROC-AUC | Test Balanced Accuracy |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| `level2 baseline reference` | `level2 + baseline` | 0.1208 | 0.7681 | 0.7380 | 0.1858 | 0.7816 | 0.7292 |
-| `level2 mechanistic stage1 reference` | `level2 + pH + alkalinity + missing flags` | 0.1416 | 0.8112 | 0.7636 | 0.3061 | 0.8412 | 0.7567 |
-| `level2 TOC increment reference` | `level2 + TOC + toc_missing_flag` | 0.2353 | 0.8537 | 0.7645 | 0.3588 | 0.8790 | 0.8183 |
-| `level2 free_chlorine increment` | `level2 + free_chlorine + free_chlorine_missing_flag` | 0.2366 | 0.8562 | 0.7721 | 0.3605 | 0.8807 | 0.8201 |
-| `level2 complete-case TOC increment reference` | `pH + alkalinity + TOC + free_chlorine` complete-case，但不加 `free_chlorine` 入模 | `NA` | `NA` | `NA` | `NA` | `NA` | `NA` |
-| `level2 complete-case free_chlorine increment` | 同上样本，加入 `free_chlorine` 入模 | `NA` | `NA` | `NA` | `NA` | `NA` | `NA` |
-| `level2 complete-case free_chlorine increment no missing flags` | 同上样本，删除四列 missing flags | `NA` | `NA` | `NA` | `NA` | `NA` | `NA` |
+| `第二级样本 baseline reference` | `第二级样本 + baseline` | 0.1208 | 0.7681 | 0.7380 | 0.1858 | 0.7816 | 0.7292 |
+| `第二级样本 mechanistic stage1 reference` | `第二级样本 + pH + alkalinity + missing flags` | 0.1416 | 0.8112 | 0.7636 | 0.3061 | 0.8412 | 0.7567 |
+| `第二级样本 TOC increment reference` | `第二级样本 + TOC + toc_missing_flag` | 0.2353 | 0.8537 | 0.7645 | 0.3588 | 0.8790 | 0.8183 |
+| `第二级样本 free_chlorine increment` | `第二级样本 + free_chlorine + free_chlorine_missing_flag` | 0.2366 | 0.8562 | 0.7721 | 0.3605 | 0.8807 | 0.8201 |
+| `第二级样本 complete-case TOC increment reference` | `pH + alkalinity + TOC + free_chlorine` complete-case，但不加 `free_chlorine` 入模 | `NA` | `NA` | `NA` | `NA` | `NA` | `NA` |
+| `第二级样本 complete-case free_chlorine increment` | 同上样本，加入 `free_chlorine` 入模 | `NA` | `NA` | `NA` | `NA` | `NA` | `NA` |
+| `第二级样本 complete-case free_chlorine increment no missing flags` | 同上样本，删除四列 missing flags | `NA` | `NA` | `NA` | `NA` | `NA` | `NA` |
 
 关键观察：
 
@@ -165,7 +165,7 @@
 
 ### 7.1 缺失模式信号非常强
 
-在 full `level2` 样本中，`free_chlorine` 的缺失占绝大多数：
+在 full `第二级样本` 样本中，`free_chlorine` 的缺失占绝大多数：
 
 - `regulatory`：`26,226 / 26,975` 行缺失
 - `anchored`：`16,961 / 17,501` 行缺失
@@ -179,7 +179,7 @@
 - `regulatory observed subset`：负类均值约 `1.060 mg/L`，正类均值约 `1.571 mg/L`
 - `anchored observed subset`：负类均值约 `0.998 mg/L`，正类均值约 `1.571 mg/L`
 
-此外，在 full `level2` 主实验的 logistic 回归中：
+此外，在 full `第二级样本` 主实验的 logistic 回归中：
 
 - `free_chlorine_sample_weighted_mean_mg_l` 的标准化系数略高于 `free_chlorine_missing_flag`
 - 但这个判断只建立在非常少的正类观测上：两个任务的 observed subset 都只有 `6` 个正类
@@ -202,7 +202,7 @@
 
 ## 9. 当前解释边界与争议点
 
-- 不能把 `level2` 的结果写成全国主线最终结论。
+- 不能把 `第二级样本` 的结果写成全国主线最终结论。
 - 不能把 `free_chlorine` 的小幅预测增益直接写成机制发现，更不能写成因果发现。
 - 不能把本轮完整主实验的小幅提升简单改写为“`free_chlorine` 明确带来稳定强增益”。
 - 不能把 observed subset 中极少数正类样本上的数值差异过度外推为稳健结论。
@@ -212,10 +212,10 @@
 
 本轮可以明确写出的结论是：
 
-1. `V4.4` 已完成，且 `free_chlorine + free_chlorine_missing_flag` 在 full `level2` 上为两条任务都带来了方向一致但幅度很小的边际增益。
+1. `V4.4` 已完成，且 `free_chlorine + free_chlorine_missing_flag` 在 full `第二级样本` 上为两条任务都带来了方向一致但幅度很小的边际增益。
 2. 这类增益在 `anchored` 任务上略更整齐，在 `regulatory` 任务上则更弱。
 3. 由于 `free_chlorine` 覆盖率极低，四变量 complete-case 子集在 train split 中只剩单一类别，导致本轮无法复现 `V4.2` / `V4.3` 那种 complete-case 稳健性验证。
-4. 因此，当前最稳妥的表述不是“`free_chlorine` 数值信号已被稳健确认”，而是“`free_chlorine` 在当前 `PWS-year level2` 口径下显示出弱边际增益，但该增益很可能是数值信息、缺失模式信息与样本选择结构的混合产物”。
+4. 因此，当前最稳妥的表述不是“`free_chlorine` 数值信号已被稳健确认”，而是“`free_chlorine` 在当前 `PWS-year 第二级样本` 口径下显示出弱边际增益，但该增益很可能是数值信息、缺失模式信息与样本选择结构的混合产物”。
 
 是否建议直接进入下一轮 `total_chlorine`：
 
@@ -230,5 +230,5 @@
 更合理的下一步优先级是：
 
 1. 先把 `V4.4` 作为“弱增益但高缺失约束”的正式结论固定下来
-2. 再单独审计 `total_chlorine` 在 `level2` 与 `facility-month` 口径下的非缺失覆盖率与正类分布
+2. 再单独审计 `total_chlorine` 在 `第二级样本` 与 `facility-month` 口径下的非缺失覆盖率与正类分布
 3. 只有在覆盖率和可执行性明显优于 `free_chlorine` 时，再决定是否启动 `V4.5`

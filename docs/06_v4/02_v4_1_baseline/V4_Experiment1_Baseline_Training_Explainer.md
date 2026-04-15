@@ -175,7 +175,7 @@
 
 逻辑是：
 
-1. 只保留 `level1`
+1. 只保留 `第一级样本`
 2. 只保留有 `tthm_regulatory_exceed_label` 的样本
 3. 把 `tthm_regulatory_exceed_label` 复制成统一的 `target_value`
 
@@ -424,7 +424,7 @@
 所以当前最准确的阶段判断是：
 
 - `V4 Experiment 1` 已完成 baseline 执行
-- 下一步应进入条件特征对照实验与 `level2 + enhanced` 增益实验
+- 下一步应进入条件特征对照实验与 `第二级样本 + enhanced` 增益实验
 
 ## 12. 当前最重要的认识
 

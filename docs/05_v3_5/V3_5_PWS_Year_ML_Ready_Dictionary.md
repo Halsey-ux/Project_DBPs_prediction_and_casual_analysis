@@ -10,10 +10,10 @@
 | `tthm_sample_weighted_mean_ug_l` | 目标 | 第三层 TTHM 年度样本加权均值，单位为 ug/L。 | 不适用 | 本轮固定为唯一连续型主结果变量。 |
 | `tthm_regulatory_exceed_label` | 标签 | 当 TTHM 年度样本加权均值大于等于 80 ug/L 时记为 1，否则记为 0。 | 不适用 | 80 ug/L 为法规阈值；目标缺失时标签留空。 |
 | `tthm_warning_label` | 标签 | 当 TTHM 年度样本加权均值大于等于 60 ug/L 时记为 1，否则记为 0。 | 不适用 | 60 ug/L 仅作为预警阈值，不能写成法规阈值；目标缺失时标签留空。 |
-| `level1_flag` | level 分层 | 标记是否满足 level1：TTHM 目标非缺失。 | 不适用 | 全国主模型 baseline 样本定义。 |
-| `level2_flag` | level 分层 | 标记是否满足 level2：在 level1 基础上 n_core_vars_available >= 2。 | 不适用 | 增强模型样本定义。 |
-| `level3_flag` | level 分层 | 标记是否满足 level3：在 level1 基础上 n_core_vars_available >= 3。 | 不适用 | 高信息验证模型样本定义；level3 包含于 level2。 |
-| `ml_level_max` | level 分层 | 记录每条记录当前可达到的最高 level。 | 不适用 | 便于后续直接筛选 level1 / level2 / level3 / not_ml_ready。 |
+| `level1_flag` | level 分层 | 标记是否满足第一级样本：TTHM 目标非缺失。 | 不适用 | 内部字段名保留为 `level1_flag`；对应人类可读叫法为“第一级样本”。 |
+| `level2_flag` | level 分层 | 标记是否满足第二级样本：在第一级样本基础上 `n_core_vars_available >= 2`。 | 不适用 | 内部字段名保留为 `level2_flag`；对应人类可读叫法为“第二级样本”。 |
+| `level3_flag` | level 分层 | 标记是否满足第三级样本：在第一级样本基础上 `n_core_vars_available >= 3`。 | 不适用 | 内部字段名保留为 `level3_flag`；第三级样本包含于第二级样本。 |
+| `ml_level_max` | level 分层 | 记录每条记录当前可达到的最高 level。 | 不适用 | 内部字段名保留为 `ml_level_max`；便于后续直接筛选第一级样本 / 第二级样本 / 第三级样本 / `not_ml_ready`。 |
 | `state_code` | baseline 候选特征 | 州代码。 | 条件 | 保留为 baseline 候选特征，但不能在文档中写成“必须入模”。 |
 | `system_type` | baseline 候选特征 | 供水系统类型。 | 是 | 适合作为第一版主模型的低维结构背景变量。 |
 | `source_water_type` | baseline 候选特征 | 原水类型。 | 是 | 适合作为第一版主模型的结构背景变量。 |

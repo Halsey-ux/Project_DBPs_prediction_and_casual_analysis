@@ -16,7 +16,7 @@
 
 `V4.4b` 不是正式建模轮次，而是进入 `total_chlorine increment` 前的 readiness audit。目标不是直接训练模型，而是回答三个更基础的问题：
 
-- `total_chlorine` 在 `PWS-year` 的 `level1 / level2 / level3` 中是否有足够覆盖率
+- `total_chlorine` 在 `PWS-year` 的 `第一级样本 / 第二级样本 / 第三级样本` 中是否有足够覆盖率
 - 在 `regulatory` 与 `anchored` 任务下，`pH + alkalinity + TOC + total_chlorine` complete-case 子集是否还能在既有 `group_by_pwsid` 切分中合法训练
 - 如果第三层主线不可行，`facility-month` 是否至少为后续机制线保留了足够的变量重合度
 
@@ -26,9 +26,9 @@
 
 本轮审计使用：
 
-- `level1`
-- `level2`
-- `level3`
+- `第一级样本`
+- `第二级样本`
+- `第三级样本`
 
 并重点检查以下列：
 
@@ -46,8 +46,8 @@
 
 并分别在：
 
-- `level2`
-- `level3`
+- `第二级样本`
+- `第三级样本`
 
 下检查 complete-case 子集的 split 类别分布与 `LogisticRegression` 可训练性。
 
@@ -67,35 +67,35 @@
 
 | 层级 | 行数 | `total_chlorine` 非缺失 | 非缺失率 | `free_chlorine` 非缺失 | `free_chlorine` 非缺失率 | `pH + alkalinity + TOC + total_chlorine` complete-case |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| `level1` | 199,802 | 783 | 0.39% | 3,547 | 1.78% | 36 |
-| `level2` | 26,975 | 185 | 0.69% | 749 | 2.78% | 36 |
-| `level3` | 6,193 | 152 | 2.45% | 618 | 9.98% | 36 |
+| `第一级样本` | 199,802 | 783 | 0.39% | 3,547 | 1.78% | 36 |
+| `第二级样本` | 26,975 | 185 | 0.69% | 749 | 2.78% | 36 |
+| `第三级样本` | 6,193 | 152 | 2.45% | 618 | 9.98% | 36 |
 
 关键观察：
 
 - `total_chlorine` 在三个层级上的覆盖率都明显低于 `free_chlorine`。
-- 即便限制到 `level3`，`total_chlorine` 非缺失率也只有 `2.45%`。
-- `pH + alkalinity + TOC + total_chlorine` 的 complete-case 总行数在 `level1 / level2 / level3` 中都只有 `36` 行，说明这个变量的可用性不是简单通过升层就能解决。
+- 即便限制到 `第三级样本`，`total_chlorine` 非缺失率也只有 `2.45%`。
+- `pH + alkalinity + TOC + total_chlorine` 的 complete-case 总行数在 `第一级样本 / 第二级样本 / 第三级样本` 中都只有 `36` 行，说明这个变量的可用性不是简单通过升层就能解决。
 
 ## 4. 任务层级 complete-case 可训练性
 
 | 任务 | 层级 | 总行数 | `total_chlorine` 非缺失 | 四变量 complete-case | train / validation / test | train 是否可合法训练 |
 | --- | --- | ---: | ---: | ---: | --- | --- |
-| `regulatory` | `level2` | 26,975 | 185 | 36 | `29 / 2 / 5` | 否 |
-| `regulatory` | `level3` | 6,193 | 152 | 36 | `29 / 2 / 5` | 否 |
-| `anchored` | `level2` | 17,501 | 93 | 14 | `13 / 0 / 1` | 否 |
-| `anchored` | `level3` | 3,071 | 71 | 14 | `13 / 0 / 1` | 否 |
+| `regulatory` | `第二级样本` | 26,975 | 185 | 36 | `29 / 2 / 5` | 否 |
+| `regulatory` | `第三级样本` | 6,193 | 152 | 36 | `29 / 2 / 5` | 否 |
+| `anchored` | `第二级样本` | 17,501 | 93 | 14 | `13 / 0 / 1` | 否 |
+| `anchored` | `第三级样本` | 3,071 | 71 | 14 | `13 / 0 / 1` | 否 |
 
 更关键的是，四个任务层级的 complete-case split 都只剩负类：
 
-- `regulatory level2`：`train={0:29}; validation={0:2}; test={0:5}`
-- `regulatory level3`：`train={0:29}; validation={0:2}; test={0:5}`
-- `anchored level2`：`train={0:13}; validation={}; test={0:1}`
-- `anchored level3`：`train={0:13}; validation={}; test={0:1}`
+- `regulatory 第二级样本`：`train={0:29}; validation={0:2}; test={0:5}`
+- `regulatory 第三级样本`：`train={0:29}; validation={0:2}; test={0:5}`
+- `anchored 第二级样本`：`train={0:13}; validation={}; test={0:1}`
+- `anchored 第三级样本`：`train={0:13}; validation={}; test={0:1}`
 
 这意味着：
 
-- 当前没有任何一个 `level2/level3 + total_chlorine complete-case` 组合具备合法训练 `LogisticRegression` 的条件
+- 当前没有任何一个 `第二级样本/第三级样本 + total_chlorine complete-case` 组合具备合法训练 `LogisticRegression` 的条件
 - 问题不只是“样本太少”，而是正类在 complete-case 里已经完全消失
 
 ## 5. 缺失模式与 observed subset 诊断
@@ -104,8 +104,8 @@
 
 | 任务 | `total_chlorine` observed | `total_chlorine` missing | observed 正类率 | missing 正类率 |
 | --- | ---: | ---: | ---: | ---: |
-| `regulatory level2` | 185 | 26,790 | 1.62% | 3.86% |
-| `anchored level2` | 93 | 17,408 | 3.23% | 5.93% |
+| `regulatory 第二级样本` | 185 | 26,790 | 1.62% | 3.86% |
+| `anchored 第二级样本` | 93 | 17,408 | 3.23% | 5.93% |
 
 这说明：
 
@@ -114,7 +114,7 @@
 
 ### 5.2 observed subset 中的数值分布
 
-在 `level2 observed subset` 中：
+在 `第二级样本 observed subset` 中：
 
 - `regulatory`：负类 `182` 行，正类仅 `3` 行
 - `anchored`：负类 `90` 行，正类仅 `3` 行
@@ -146,7 +146,7 @@
 
 这说明：
 
-- `facility-month` 下 `total_chlorine` 的重合度明显高于 `PWS-year level2/level3`
+- `facility-month` 下 `total_chlorine` 的重合度明显高于 `PWS-year 第二级样本/第三级样本`
 - 但它仍然不足以形成“`TTHM + 三个核心变量 + total_chlorine` 全齐”的通用机制宽表
 - 因此它更像第二层可做专题 reduced dataset 的候选变量，而不是第三层全国主模型的下一轮自然增量变量
 
@@ -158,8 +158,8 @@
 
 原因不是单一的一条，而是三条同时成立：
 
-1. `total_chlorine` 在 `PWS-year level2` 的非缺失率只有 `0.69%`，比 `free_chlorine` 更低。
-2. 在 `level2 / level3` 下，所有 `total_chlorine` complete-case 版本的 train split 都只剩单一类别，完全不具备合法训练条件。
+1. `total_chlorine` 在 `PWS-year 第二级样本` 的非缺失率只有 `0.69%`，比 `free_chlorine` 更低。
+2. 在 `第二级样本 / 第三级样本` 下，所有 `total_chlorine` complete-case 版本的 train split 都只剩单一类别，完全不具备合法训练条件。
 3. 即便退回 `facility-month`，它也只适合作为重合度有限的专题 reduced dataset 候选，而不是直接接入现有第三层主线。
 
 ## 8. 当前更合理的下一步
@@ -176,6 +176,6 @@
 `V4.4b` 可以明确写出的结论是：
 
 1. `total_chlorine` 在当前 `PWS-year` 主线中比 `free_chlorine` 更不适合进入正式增量实验。
-2. `level2` 与 `level3` 下的 `total_chlorine complete-case` 在两个正式任务中全部不可训练，不具备进入 `V4.5` 的最基本条件。
+2. `第二级样本` 与 `第三级样本` 下的 `total_chlorine complete-case` 在两个正式任务中全部不可训练，不具备进入 `V4.5` 的最基本条件。
 3. `facility-month` 虽然保留了比第三层更高的重合度，但仍然只支持专题 reduced dataset 候选，不支持把 `total_chlorine` 直接推进为第三层主模型的下一轮增强变量。
 4. 因此，`V4.4b` 的正式建议是：暂停 `V4.5 total_chlorine increment`，把 `total_chlorine` 从“第三层主线待增量变量”调整为“第二层机制专题候选变量”。

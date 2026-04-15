@@ -1,4 +1,4 @@
-﻿# V3_Chapter1_Part1_Prototype_Build_Codex_Prompt
+# V3_Chapter1_Part1_Prototype_Build_Codex_Prompt
 
 你现在要协助我完成论文/项目第一章第一部分的 V3 阶段任务。
 
