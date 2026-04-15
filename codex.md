@@ -460,10 +460,14 @@ GitHub 不直接管理：
 - 已确认当前正式业务数据未发现新的 0 字节损坏文件；唯一 0 字节文件为已保留的事故证据备份 `V3_pws_year_master.zero_byte_20260401_091846.csv`
 - 已确认原始 CSV 数据目录 `D:\Syr4_Project\syr4_DATA_CSV` 存在且未发现 0 字节文件；历史记录中的 `D:\SYR4_Data\syr4_DATA_excel` 当前不存在，需视为非当前可用输入路径
 - 已再次确认 `data_local/` 大型本地数据和原始 SYR4 数据不应直接提交到 GitHub，GitHub 仅建议备份脚本、文档、配置、数据字典和轻量审计报告
+- 已新增脚本 `scripts/audit_legacy_root_imports_cleanup.py`
+- 已完成 `legacy_root_imports` 清理审计，生成报告 `docs/00_overview/Legacy_Root_Imports_Cleanup_Audit_Report_2026_04_15.md`
+- 已确认 `docs/**/legacy_root_imports/` 下共有 `10` 个 legacy 文件，其中 `3` 个为内容完全重复的可删除候选，`4` 个需要人工复核，`3` 个仅 legacy 存在并建议暂时保留
+- 已按用户确认删除 `3` 个完全重复的 legacy 副本，仅保留正式位置文件；其余 `7` 个 legacy 文件未删除，仍需人工复核或暂时保留
 
 ## 9. 最近一次更新
 
-最后更新时间：2026-04-15 10:42（Asia/Hong_Kong）
+最后更新时间：2026-04-15 10:43（Asia/Hong_Kong）
 
 最近更新内容：
 
@@ -480,6 +484,9 @@ GitHub 不直接管理：
 - 已完成本地项目数据完整性审计，并新增中文报告 `docs/00_overview/Local_Project_Data_Integrity_Audit_Report_2026_04_15.md`
 - 已确认三个关键本地数据集通过预期行列数校验，当前没有发现新的正式业务数据损坏文件
 - 已明确不建议把 `data_local/` 大型本地数据直接 Git 提交，建议提交本轮新增脚本、文档、恢复记录和轻量审计报告作为 GitHub 备份
+- 已完成 `legacy_root_imports` 清理审计，并新增中文报告 `docs/00_overview/Legacy_Root_Imports_Cleanup_Audit_Report_2026_04_15.md`
+- 已按用户确认删除 `3` 个完全重复的 legacy 副本：`GITHUB_AND_LOCAL_PROJECT_STATUS.md`、`V3_prototype_audit_report.md`、`V3_pws_year_build_notes.md`
+- 已明确当前仍不应自动删除其余 `7` 个 legacy 文件，其中 `4` 个需要人工复核，`3` 个仅 legacy 存在并暂时保留
 - 已同步更新 `codex.md`
 
 对应提交：
@@ -495,6 +502,7 @@ GitHub 不直接管理：
 - 启动 `V5.6 Main Screening Admission Test Design And Feature Set Freeze`
 - `V5.5` 审计已在恢复后重新运行；后续如继续修改 V5.5 脚本或通路定义，应继续使用恢复后的正式 `V3_pws_year_master.csv`
 - 若用户确认执行 Git 备份，应仅提交脚本、文档、配置和轻量审计报告，不提交 `data_local/` 大型本地数据、原始 SYR4 数据、`scratch/` 或事故 0 字节备份文件
+- 如需继续清理冗余文件，应只处理 `Legacy_Root_Imports_Cleanup_Audit_Report_2026_04_15.md` 中剩余的 `needs_manual_review` 和 `legacy_only_keep_until_reviewed` 文件，且必须先人工比较内容差异再决定迁移、合并或删除
 - 基于 `V5.5` readiness audit 冻结第一轮主筛查候选输入组，优先包括 `PWS-year` 结构背景通路、设施复杂度通路和可审计处理工艺摘要
 - 明确酸碱与缓冲条件通路进入可选机制证据模块的准入测试口径，并避免把第二层 `facility-month` 与第三层 `PWS-year` 内部样本等级混写
 - 对 NOM/有机前体物通路和消毒剂与残余消毒剂通路继续做专题覆盖率、时序和标签重叠审计，不直接纳入广覆盖主模型
