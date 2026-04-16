@@ -24,7 +24,7 @@
 
 ## 3. 当前阶段目标
 
-当前阶段目标已经从单条第三层主线增量验证，完成 `V5.5` 候选信息通路 readiness audit，并推进到 `V5.6` 主筛查模型准入测试设计与输入组冻结准备阶段：
+当前阶段目标已经从单条第三层主线增量验证，完成 `V5.5` 候选信息通路 readiness audit，并完成 `V5.6` 候选通路字段盘点、字段-Y 对齐与覆盖审计，进入先验因果-语义复核准备阶段：
 
 - 将当前第三层正式主线重新表述为“基于美国 SYR4 的全国尺度 DBP 高风险场景正式主模型”，而不直接表述为通用全球模型
 - 固定系统背景通路的当前正式版本，即第三层 `第一级样本` 上的 `baseline + structural + treatment`
@@ -77,7 +77,7 @@ D:\Project_DBPs_prediction_and_casual_analysis
   - 当前已按版本分层写入 `V4_3/tthm_regulatory_exceedance_prediction/` 与 `V4_3/tthm_anchored_risk_prediction/`
 - `data_local/V5_Chapter1_Part1_Facility_Month_Module/`
   - V5 第二层 `facility-month` 模块结果目录
-  - 当前已写入 `V5_0/`、`V5_1/`、`V5_2/` 与 `V5_5/`
+  - 当前已写入 `V5_0/`、`V5_1/`、`V5_2/`、`V5_5/` 与 `V5_6/`
 
 各目录作用：
 
@@ -121,6 +121,8 @@ D:\Project_DBPs_prediction_and_casual_analysis
     - `09_v5_4_execution/`：V5.4 候选信息通路审计与框架组装协议
     - `10_v5_5_prompt/`：V5.5 候选信息通路 readiness audit 的 Codex 执行 prompt
     - `11_v5_5_execution/`：V5.5 候选信息通路 readiness audit 执行报告
+    - `12_v5_6_prompt/`：V5.6 候选通路字段盘点、字段-Y 对齐与覆盖审计 prompt
+    - `13_v5_6_execution/`：V5.6 候选通路字段盘点、覆盖审计、数据可用性决策摘要与先验因果-语义复核清单
     - `V5_Master_Plan.md`：V5 总体计划
   - `V1_5_Update_Service_Scope_Summary.md`：V1-V5 大版本服务范围说明
 - `scripts/`
@@ -464,48 +466,61 @@ GitHub 不直接管理：
 - 已完成 `legacy_root_imports` 清理审计，生成报告 `docs/00_overview/Legacy_Root_Imports_Cleanup_Audit_Report_2026_04_15.md`
 - 已确认 `docs/**/legacy_root_imports/` 下共有 `10` 个 legacy 文件，其中 `3` 个为内容完全重复的可删除候选，`4` 个需要人工复核，`3` 个仅 legacy 存在并建议暂时保留
 - 已按用户确认删除 `3` 个完全重复的 legacy 副本，仅保留正式位置文件；其余 `7` 个 legacy 文件未删除，仍需人工复核或暂时保留
+- 已新增文档 `docs/07_v5/12_v5_6_prompt/V5_6_Candidate_Pathway_Field_Inventory_And_Coverage_Audit_Codex_Prompt.md`
+- 已将下一轮 `V5.6` 任务从直接冻结主筛查输入组前移为：基于 `V5.5` readiness audit 结果，补完候选通路字段盘点、字段-Y 对齐、通路内部覆盖结构和 complete/partial-case 可训练性审计
+- 已明确 `V5.6` 仍不是建模轮，也不是最终因果通路定稿轮，而是为后续先验因果-语义分析、通路字段重组和主筛查特征组冻结提供数据事实基础的审计轮
+- 已新增脚本 `scripts/audit_v5_6_candidate_pathway_field_inventory.py`
+- 已完成 `V5.6 Candidate Pathway Field Inventory And Coverage Audit`，本地结果写入 `data_local/V5_Chapter1_Part1_Facility_Month_Module/V5_6/`
+- 已新增中文执行文档目录 `docs/07_v5/13_v5_6_execution/`
+- 已生成 `V5_6_all_field_inventory.csv`、`V5_6_field_label_alignment.csv`、`V5_6_candidate_pathway_field_map.csv`、`V5_6_pathway_internal_coverage_summary.csv`、`V5_6_pathway_complete_partial_case_summary.csv` 和 `V5_6_candidate_pathway_field_inventory_summary.json`
+- 已新增中文报告 `V5_6_Candidate_Pathway_Field_Inventory_And_Coverage_Audit_Report.md`、`V5_6_Pathway_Data_Availability_Decision_Summary.md` 和 `V5_6_Causal_Semantic_Review_Todo_List.md`
+- 已确认本轮使用 `V3_pws_year_master.csv`、`V3_facility_month_master.csv` 与 `V4_pws_year_ml_ready.csv`；其中 `V4_pws_year_ml_ready.csv` 仅作为 TTHM 主线字段对照表，不用于 HAA5 可训练性判断
+- 已确认 `PWS-year` 结构背景通路和设施复杂度通路具备较好的数据覆盖基础；处理工艺通路在修正摘要/覆盖标记口径后仍为约 `15.21%` 通路覆盖率；酸碱与缓冲条件通路为可选机制证据模块候选；NOM 与消毒剂相关通路完整组合和标签重叠基础不足，更适合专题审计或先验语义复核
+- 已明确下一步不应立即冻结主筛查输入组，而应先进入先验因果-语义分析，重点复核结果字段、样本数/月份数/设施数、证据质量字段、消毒剂时序边界以及水质强度字段与监测覆盖字段的拆分
 
 ## 9. 最近一次更新
 
-最后更新时间：2026-04-15 10:43（Asia/Hong_Kong）
+最后更新时间：2026-04-15 20:00（Asia/Hong_Kong）
 
 最近更新内容：
 
-- 已完成 `V3_pws_year_master.csv` 受控恢复，恢复来源为未损坏的 `V3_facility_month_master.csv` 和原始 V3 年度聚合逻辑
-- 已新增恢复脚本 `scripts/recover_v3_pws_year_master_from_facility_month.py`
-- 已新增恢复记录文档 `docs/04_v3/V3_PWS_Year_Master_Recovery_Note.md`
-- 已确认恢复后的 V3 第三层主表与历史 V3 关键统计一致：行数 `259,500`、字段数 `130`、主键重复数 `0`、`TTHM` 系统-年份单元 `199,802`、`HAA5` 系统-年份单元 `165,379`
-- 已确认恢复后的第三层主表可临时生成与现有正式 `V4_pws_year_ml_ready.csv` 逐列逐行一致的 V4 `ml_ready` 数据
-- 已恢复后重跑 V5.5 readiness audit，当前审计输出已统一使用正式恢复后的 `V3_pws_year_master.csv`
-- 已补齐 V5.5 中文执行报告 `docs/07_v5/11_v5_5_execution/V5_5_Candidate_Pathway_Readiness_Audit_Report.md`
-- 已确认 V5.5 复跑脚本读取正式 `V3_pws_year_master.csv`，第三层 `PWS-year` 行数为 `259,500`，第二层 `facility-month` 行数为 `1,442,728`
-- 已确认 `PWS-year` 结构背景通路与设施复杂度通路优先进入后续主筛查模型准入测试，酸碱与缓冲条件通路进入可选机制证据模块准入测试
-- 已完成 V4 文档交叉校验，确认恢复后的第三层主表与 V4 阶段记录的 `V4_pws_year_ml_ready.csv` 总行数、三级样本数量、正类数量和 treatment 覆盖统计一致
-- 已完成本地项目数据完整性审计，并新增中文报告 `docs/00_overview/Local_Project_Data_Integrity_Audit_Report_2026_04_15.md`
-- 已确认三个关键本地数据集通过预期行列数校验，当前没有发现新的正式业务数据损坏文件
-- 已明确不建议把 `data_local/` 大型本地数据直接 Git 提交，建议提交本轮新增脚本、文档、恢复记录和轻量审计报告作为 GitHub 备份
-- 已完成 `legacy_root_imports` 清理审计，并新增中文报告 `docs/00_overview/Legacy_Root_Imports_Cleanup_Audit_Report_2026_04_15.md`
-- 已按用户确认删除 `3` 个完全重复的 legacy 副本：`GITHUB_AND_LOCAL_PROJECT_STATUS.md`、`V3_prototype_audit_report.md`、`V3_pws_year_build_notes.md`
-- 已明确当前仍不应自动删除其余 `7` 个 legacy 文件，其中 `4` 个需要人工复核，`3` 个仅 legacy 存在并暂时保留
+- 已完成 `V5.6 Candidate Pathway Field Inventory And Coverage Audit`
+- 已新增脚本 `scripts/audit_v5_6_candidate_pathway_field_inventory.py`
+- 已读取 `V3_pws_year_master.csv`、`V3_facility_month_master.csv` 与 `V4_pws_year_ml_ready.csv` 完成全字段 inventory、字段-Y 对齐、候选通路字段展开、通路内部覆盖结构和 complete/partial-case 样本基础审计
+- 已生成本地结果目录 `data_local/V5_Chapter1_Part1_Facility_Month_Module/V5_6/`
+- 已输出 `V5_6_all_field_inventory.csv`、`V5_6_field_label_alignment.csv`、`V5_6_candidate_pathway_field_map.csv`、`V5_6_pathway_internal_coverage_summary.csv`、`V5_6_pathway_complete_partial_case_summary.csv` 和 `V5_6_candidate_pathway_field_inventory_summary.json`
+- 已新增中文执行文档目录 `docs/07_v5/13_v5_6_execution/`
+- 已新增 `V5_6_Candidate_Pathway_Field_Inventory_And_Coverage_Audit_Report.md`、`V5_6_Pathway_Data_Availability_Decision_Summary.md` 和 `V5_6_Causal_Semantic_Review_Todo_List.md`
+- 已确认 `PWS-year` 全字段数为 `130`，`facility-month` 全字段数为 `98`，`V4_pws_year_ml_ready` 字段数为 `38`
+- 已确认 `PWS-year` 结构背景通路和设施复杂度通路的任意字段覆盖率均为 `100.00%`，与 `TTHM/HAA5` 标签重叠率分别为 `76.99%` 和 `63.73%`
+- 已确认 `PWS-year` 处理工艺通路在修正摘要/覆盖标记口径后任意字段覆盖率为 `15.21%`，与 `TTHM/HAA5` 标签重叠率分别为 `10.29%` 和 `9.13%`
+- 已确认 `PWS-year` 酸碱与缓冲条件通路任意字段覆盖率为 `39.18%`，NOM/有机前体物通路为 `7.59%`，消毒剂与残余消毒剂通路为 `3.47%`
+- 已确认 `facility-month` NOM、酸碱和消毒剂相关通路虽有机制意义，但与同周期 `TTHM/HAA5` 的直接字段-Y 重叠明显有限，后续更适合专题审计、高信息子样本分析或先验语义复核
+- 已明确结果谱系字段、样本数/月份数/设施数、match quality、缺失标记、消毒剂字段和合规/纠正行动类字段均需进入后续先验因果-语义复核清单
 - 已同步更新 `codex.md`
 
 对应提交：
 
-- 最近已推送提交：`9c02e79`（`feat: freeze V5.1 facility-month baseline protocol and experiments`）
-- 本次提交信息：`feat: complete V5 pathway audits and recovery docs`
-- 本次提交范围包括 `V5.2`、`V5.2b`、`V5.3`、`V5.4`、`V5.5`、`V3_pws_year_master` 恢复、本地数据完整性审计文档、相关脚本和 `codex.md` 更新
+- 最近已推送提交：`008afd0`（`Audit legacy root imports cleanup`）
+- 建议本次提交信息：`feat: add V5.6 pathway field inventory audit`
+- 本次提交范围建议包括 V5.6 审计脚本、V5.6 中文执行文档和 `codex.md` 更新；`data_local/V5_6/` 本地 CSV/JSON 结果按当前 `.gitignore` 保留在本地，不默认提交
+- 本次更新尚未提交，待用户确认是否执行 Git 提交与推送
 
+补充更新：
+- 更新时间：2026-04-16（Asia/Hong_Kong）
+- 更新内容概述：按用户要求补充 `V5_6_Candidate_Pathway_Field_Inventory_And_Coverage_Audit_Report.md`，新增 `7.1 通路字段明细与 n>=1/2/3 标签对齐结果`，逐通路列出具体字段、每个字段与 `TTHM/HAA5` 的覆盖率和对齐条数，并补充整条通路在 `n>=1`、`n>=2`、`n>=3` 口径下的总体可用条数、覆盖率和标签对齐条数。
+- 对应 commit 信息：尚未提交；建议提交信息为 `docs: expand V5.6 pathway alignment details`。
 ## 10. 下一步任务
 
 下一步最具体的工作是：
 
-- 启动 `V5.6 Main Screening Admission Test Design And Feature Set Freeze`
+- 基于 `docs/07_v5/13_v5_6_execution/V5_6_Causal_Semantic_Review_Todo_List.md` 启动下一轮先验因果-语义分析，重点复核泄露风险、时序边界、应用可得性、机制强度字段与监测覆盖字段的拆分
 - `V5.5` 审计已在恢复后重新运行；后续如继续修改 V5.5 脚本或通路定义，应继续使用恢复后的正式 `V3_pws_year_master.csv`
 - 若用户确认执行 Git 备份，应仅提交脚本、文档、配置和轻量审计报告，不提交 `data_local/` 大型本地数据、原始 SYR4 数据、`scratch/` 或事故 0 字节备份文件
 - 如需继续清理冗余文件，应只处理 `Legacy_Root_Imports_Cleanup_Audit_Report_2026_04_15.md` 中剩余的 `needs_manual_review` 和 `legacy_only_keep_until_reviewed` 文件，且必须先人工比较内容差异再决定迁移、合并或删除
-- 基于 `V5.5` readiness audit 冻结第一轮主筛查候选输入组，优先包括 `PWS-year` 结构背景通路、设施复杂度通路和可审计处理工艺摘要
-- 明确酸碱与缓冲条件通路进入可选机制证据模块的准入测试口径，并避免把第二层 `facility-month` 与第三层 `PWS-year` 内部样本等级混写
-- 对 NOM/有机前体物通路和消毒剂与残余消毒剂通路继续做专题覆盖率、时序和标签重叠审计，不直接纳入广覆盖主模型
+- 基于 `V5.6` 字段审计结果，形成字段准入/暂缓/仅证据质量/仅解释的决策表
+- 主筛查候选输入组冻结应放在 `V5.6` 字段审计和后续先验因果-语义复核之后执行，不应在尚未完成泄露风险和语义归属复核时直接定稿
+- split 口径下的 train / validation / test 正负样本基础审计需在模型准入测试或特征冻结前补做
 - 继续保留本地 `V3_pws_year_master.zero_byte_20260401_091846.csv` 和恢复校验 JSON 作为事故记录，不纳入 GitHub
 - 继续禁止同周期同目标 DBP 结果字段、单项组分、合规与纠正行动类变量作为前置预测输入
 - 暂不进入树模型、超参数优化或多模型简单投票，先完成模型准入输入组冻结和泄露边界固化
